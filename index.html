@@ -1325,7 +1325,17 @@ const cellTip = document.createElement("div");
 cellTip.className = "cell-tip"; cellTip.hidden = true;
 document.body.appendChild(cellTip);
 let tipKey = "";
-function hideCellTip() { cellTip.hidden = true; tipKey = ""; }
+// Balon, fare aynı elemanın üzerinde TIP_DELAY ms beklerse açılır (hemen açılıp göz yormasın)
+const TIP_DELAY = 3000;
+let tipTimer = 0, tipPos = { x: 0, y: 0 };
+function hideCellTip() { cellTip.hidden = true; tipKey = ""; clearTimeout(tipTimer); }
+function placeCellTip() {
+  const w = cellTip.offsetWidth, h = cellTip.offsetHeight;
+  let x = tipPos.x + 16, y = tipPos.y + 18;
+  if (x + w > innerWidth - 8) x = Math.max(8, tipPos.x - 16 - w);
+  if (y + h > innerHeight - 8) y = Math.max(8, tipPos.y - 14 - h);
+  cellTip.style.left = x + "px"; cellTip.style.top = y + "px";
+}
 function cellTipHtml(cell) {
   const seen = new Set(), rows = [];
   for (const k of ADDR_KEYS) {
@@ -1346,13 +1356,16 @@ function cellTipMove(e) {
   const cell = c >= 0 && c < NC ? project.rungs[g]?.cells[r]?.[c] : null;
   if (!cell || cell.t === "W") return hideCellTip();
   const key = `${g},${r},${c},${JSON.stringify(cell)}`;
-  if (key !== tipKey) { tipKey = key; cellTip.innerHTML = cellTipHtml(cell); }
-  cellTip.hidden = false;
-  const w = cellTip.offsetWidth, h = cellTip.offsetHeight;
-  let x = e.clientX + 16, y = e.clientY + 18;
-  if (x + w > innerWidth - 8) x = Math.max(8, e.clientX - 16 - w);
-  if (y + h > innerHeight - 8) y = Math.max(8, e.clientY - 14 - h);
-  cellTip.style.left = x + "px"; cellTip.style.top = y + "px";
+  tipPos = { x: e.clientX, y: e.clientY };
+  if (key !== tipKey) {          // yeni eleman: balonu gizle, süreyi baştan başlat
+    hideCellTip();
+    tipKey = key;
+    const html = cellTipHtml(cell);
+    tipTimer = setTimeout(() => {
+      if (tipKey !== key || pop) return;
+      cellTip.innerHTML = html; cellTip.hidden = false; placeCellTip();
+    }, TIP_DELAY);
+  } else if (!cellTip.hidden) placeCellTip();
 }
 // Eleman açıklaması: paletteki düğmenin açıklaması
 function elemDesc(t) {
