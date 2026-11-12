@@ -139,12 +139,14 @@
   nav.tabs .tabbtns > a.helptab svg.ti { width: 1.25em; height: 1.25em; --ic-acc: #fff; }
   /* Bilgi akışı kutusu (sekme satırında): en yeni üstte */
   /* Sarmalayıcı yerleşimde sabit yer tutar; kutu basılı tutunca üst katmanda aşağı açılır (ladder kaymaz) */
-  .feedwrap { flex: 1 1 320px; min-width: 220px; height: 60px; position: relative; align-self: center; margin: 4px 10px; }
-  .feed { position: absolute; inset: 0 0 auto 0; height: 60px; overflow-y: auto;
+  .feedwrap { flex: 1 1 320px; min-width: 220px; position: relative; align-self: center; margin: 4px 10px; }
+  .feed { position: absolute; inset: 0 0 auto 0; overflow-y: auto;
           background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px;
           font: .8em/1.45 ui-monospace, Consolas, monospace; color: var(--muted);
           cursor: ns-resize; touch-action: none; user-select: none; transition: height .15s ease-out, box-shadow .15s; }
-  .feed.open { height: calc(15 * 1.45em + 8px); overflow: hidden; z-index: 45; background: var(--card);
+  .feedwrap { height: var(--feedH, 60px); }
+  .feed { height: var(--feedH, 60px); }
+  .feed.open { height: max(var(--feedH, 60px), calc(15 * 1.45em + 8px)); overflow: hidden; z-index: 45; background: var(--card);
                border-color: var(--accent); box-shadow: 0 14px 36px rgba(0, 0, 0, .35); }
   .feed div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .feed div:first-child { color: var(--text); }
@@ -356,6 +358,25 @@
                       padding: 5px 12px; font-size: .9em; display: inline-flex; gap: 6px; align-items: center; margin-bottom: -2px; }
   .page-tabs button.active { background: var(--card); color: var(--text); font-weight: 600; border-color: var(--line);
                              box-shadow: inset 0 3px 0 var(--accent); border-bottom: 2px solid var(--card); }
+  .plc-state { margin-left: auto; align-self: center; display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px; border-radius: 999px;
+               font-weight: 700; font-size: .95em; letter-spacing: .03em; border: 2px solid var(--line); color: var(--muted); background: var(--card); margin-bottom: 4px; }
+  .plc-state .dotx { width: 10px; height: 10px; border-radius: 50%; background: var(--off); }
+  .plc-state.run { color: #15803d; border-color: #16a34a; background: color-mix(in srgb, #16a34a 12%, var(--card)); }
+  .plc-state.run .dotx { background: #16a34a; box-shadow: 0 0 0 3px color-mix(in srgb, #16a34a 30%, transparent); animation: plcpulse 1.6s ease-in-out infinite; }
+  .plc-state.stop { color: #b45309; border-color: #d97706; background: color-mix(in srgb, #d97706 12%, var(--card)); }
+  .plc-state.stop .dotx { background: #d97706; border-radius: 2px; }
+  .plc-state .sm { font-weight: 600; font-size: .78em; opacity: .85; }
+  @keyframes plcpulse { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, #16a34a 0%, transparent); } }
+  .feedgrip { position: absolute; left: 30%; right: 30%; bottom: -7px; height: 8px; cursor: ns-resize; border-radius: 4px; z-index: 46; touch-action: none; }
+  .feedgrip::after { content: ""; position: absolute; left: 50%; top: 3px; width: 36px; height: 3px; margin-left: -18px; border-radius: 2px; background: var(--line); }
+  .feedgrip:hover::after { background: var(--accent); }
+  #compDlg .dlg { width: min(720px, calc(100vw - 32px)); }
+  .cmp-list { max-height: 55vh; overflow: auto; margin: 6px 0 10px; }
+  .cmp-item { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; padding: 8px 6px; border-bottom: 1px solid var(--line); cursor: pointer; border-radius: 6px; }
+  .cmp-item:hover { background: var(--acc-soft); }
+  .cmp-item .ico { font-weight: 800; text-align: center; }
+  .cmp-item.err .ico { color: var(--err); } .cmp-item.warn .ico { color: var(--warn); }
+  .cmp-item .where { font-weight: 700; } .cmp-item .hint { color: var(--muted); font-size: .9em; margin-top: 2px; }
   .page-tabs button.add { background: none; border-style: dashed; }
   .page-tabs .x { opacity: .55; padding: 0 2px; }
   .page-tabs .x:hover { opacity: 1; color: var(--err); }
@@ -479,7 +500,7 @@
   <button data-tab="set"><svg class="ic ti" aria-hidden="true"><use href="#i-gear"/></svg>Ayarlar</button>
   <a class="helptab" href="kilavuz.html" target="_blank" rel="noopener" title="Kullanma kılavuzu (yeni sekmede açılır)"><svg class="ic ti" aria-hidden="true"><use href="#i-help"/></svg>Yardım</a>
  </div>
-  <div class="feedwrap"><div id="feed" class="feed" title="Bilgi akışı: en yeni üstte. Basılı tutunca son 15 bilgi açılır; ayrıntılı kayıt Kayıt sekmesinde."></div></div>
+  <div class="feedwrap"><div class="feedgrip" id="feedGrip" title="Sürükleyerek bilgi akışı kutusunun boyunu değiştir (çift tık: varsayılan)"></div><div id="feed" class="feed" title="Bilgi akışı: en yeni üstte. Basılı tutunca son 15 bilgi açılır; ayrıntılı kayıt Kayıt sekmesinde."></div></div>
   <div class="progbar">
     <span id="syncState" hidden></span>
     <input id="fileInput" type="file" accept=".json,application/json" hidden>
@@ -541,6 +562,14 @@
     <div class="dlg-btns"><button id="xrefClose" class="primary">Kapat</button></div>
   </div>
 </div>
+<div id="compDlg" class="dlg-back" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="compTitle">
+    <div class="dlg-head"><span class="dlg-ic"><svg class="ic" aria-hidden="true"><use href="#i-ladder"/></svg></span><h3 id="compTitle">Derleme sonucu</h3></div>
+    <div id="compSum" class="tag"></div>
+    <div id="compList" class="cmp-list"></div>
+    <div class="dlg-btns"><button id="compClose" class="primary">Kapat</button></div>
+  </div>
+</div>
 <div id="dlg" class="dlg-back" hidden>
   <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
     <div class="dlg-head"><span id="dlgIcon" class="dlg-ic"></span><h3 id="dlgTitle"></h3></div>
@@ -571,7 +600,7 @@
         </details>
         <details class="tg" data-tg="bag" open><summary><svg class="ic" aria-hidden="true"><use href="#i-wire"/></svg>Bağlantılar</summary>
           <button class="tool" data-t="W" title="Yatay çizgi · Kısayol: H / -"><span class="sym">────</span>Yatay çizgi<kbd class="k">H / -</kbd></button>
-          <button class="tool" id="btnVLink" title="Seçili hücrenin sağından alt satıra dikey bağlantı (aç/kapat) · Kısayol: V veya |"><span class="sym">│</span>Dikey bağlantı<kbd class="k">V</kbd></button>
+          <button class="tool" id="btnVLink" title="Seçili hücrenin solundan alt satıra dikey bağlantı (aç/kapat) · Kısayol: V veya |"><span class="sym">│</span>Dikey bağlantı<kbd class="k">V</kbd></button>
         </details>
         <details class="tg" data-tg="bobin" open><summary><svg class="ic" aria-hidden="true"><use href="#i-coil"/></svg>Bobinler</summary>
           <button class="tool" data-t="OUT" title="Bobin: hat enerjiliyse 1, değilse 0 · Kısayol: B"><span class="sym">─( )</span>Bobin<kbd class="k">B</kbd></button>
@@ -651,7 +680,7 @@
         Adres yerine Semboller sekmesindeki adlar da yazılabilir.
         Tek tuş: <code>A</code> açık kontak, <code>K</code> kapalı kontak, <code>P</code>/<code>N</code> yükselen/düşen kenar, <code>C</code> karşılaştırma,
         <code>B</code> bobin, <code>T</code> ters bobin, <code>S</code> set, <code>R</code> reset, <code>H</code> veya <code>-</code> yatay çizgi, <code>V</code> veya <code>|</code> dikey bağlantı,
-        <code>Enter</code> adres düzenle, oklar gezin, <code>Del</code> seçili hücreyi sil, <code>Backspace</code> soldaki hücreyi silerek geri git.
+        <code>Enter</code> adres düzenle, oklar gezin, <code>Del</code> seçili hücreyi sil, <code>Backspace</code> soldaki hücreyi silerek geri git, <code>Ctrl+oklar</code> seçili elemanı kaydır. Dikey bağlantı seçili hücrenin <b>soluna</b> konur.
         Alt programlar üstteki sayfa sekmelerinde (＋ Alt program).
         Kısayollar: <code>Ctrl+Z/Y</code> geri al/yinele, <code>Ctrl+C/X/V</code> kopyala/kes/yapıştır, <code>Ctrl+F</code> bul / çapraz referans.
         Kart yoksa <b>Bağlan → ▶ Simülasyon</b>: program tarayıcıda çalışır; girişler Pinler sekmesinden verilir.
@@ -759,6 +788,12 @@
   <!-- AYARLAR -->
   <section id="tab-set" class="tab" hidden>
     <div class="card" style="margin-bottom:14px">
+      <h2>Kart saati</h2>
+      <div class="row"><span id="rtcBox" hidden>Kart saati: <b id="rtcNow">—</b> <button id="btnRtcSync" title="PC saatini karta gönder">PC saatini karta aktar</button></span>
+        <span id="rtcOff" class="tag">Kart bağlı değil.</span></div>
+      <p class="tag">Kart saati, panel karta bağlanınca PC saatinden kendiliğinden alınır. Enerji kesilince kaybolur; zaman aralığı (TW) kontakları ve RT değerleri bu saati kullanır.</p>
+    </div>
+    <div class="card" style="margin-bottom:14px">
       <h2>Görünüm</h2>
       <div class="row">
         <span class="tag" style="min-width:80px">Tema</span>
@@ -848,7 +883,6 @@
             <option value="2000">2 kHz</option><option value="5000">5 kHz</option><option value="10000">10 kHz</option><option value="20000">20 kHz</option>
           </select>
         </label>
-        <span id="rtcBox" class="tag" hidden>Kart saati: <b id="rtcNow">—</b> <button id="btnRtcSync" title="PC saatini karta gönder">PC saatini gönder</button></span>
         <span class="tag" title="Mod kalıcıdır: kart enerji kesilip gelince veya resetten sonra son moduyla (RUN/STOP) açılır.">RUN/STOP modu kalıcı · BOOT tuşu 5 sn: RUN ↔ STOP</span>
         <button id="btnAllOff" disabled>Tüm pinleri kapat</button>
       </div>
@@ -1170,10 +1204,29 @@ function disp(addr, max = 11) {
   const txt = String((s ? A(addr)?.s : addr) ?? "");
   return txt.length > max ? txt.slice(0, max - 1) + "…" : txt;
 }
+// Kendine has adreslerin açıklaması
+const SYS_DESC = {
+  S0: "İlk scan: RUN'a geçişte yalnız bir scan 1 (başlangıç ayarları için)", S1: "1 Hz saat darbesi (0,5 s 1 / 0,5 s 0)", S2: "Hep 1 (koşulsuz çalıştırmak için)",
+  S3: "Hep 0", S4: "10 Hz saat darbesi", S5: "2 Hz saat darbesi", S6: "0,5 Hz saat darbesi (1 s 1 / 1 s 0)", S7: "1 dakika periyot (30 s 1 / 30 s 0)",
+  S8: "Kart saati ayarlı ise 1", RT0: "Saat: yıl", RT1: "Saat: ay", RT2: "Saat: gün", RT3: "Saat: saat (0–23)", RT4: "Saat: dakika", RT5: "Saat: saniye",
+  RT6: "Saat: haftanın günü (1 Pzt … 7 Paz)", RT7: "Saat: günün dakikası (0–1439)", RT8: "Saat ayarlı ise 1",
+};
+function addrDesc(a) {
+  if (!a) return "";
+  if (SYS_DESC[a.s]) return SYS_DESC[a.s];
+  return { I: "dijital giriş (GPIO" + a.n + ")", Q: "dijital çıkış (GPIO" + a.n + ")", AI: "analog giriş, mV (GPIO" + a.n + ")", PW: "PWM çıkışı 0–1000 ‰ (GPIO" + a.n + ")",
+    M: "yardımcı bit", T: "zamanlayıcı (bit: çıkış, sayı: geçen ms)", C: "sayıcı (bit: çıkış, sayı: değer)", D: "tam sayı değişken", F: "ondalıklı değişken",
+    HC: "hızlı sayıcı değeri", HF: "hızlı sayıcı frekansı (Hz)" }[a.area] || "";
+}
 function tipOf(addr) {
-  const s = symOf(addr);
-  const a = A(addr)?.s || addr;
-  return s ? `${a} = ${s.name}${s.comment ? " — " + s.comment : ""}` : a;
+  const s = symOf(addr), a = A(addr);
+  const ad = a?.s || addr, d = addrDesc(a);
+  return (s ? `${ad} = ${s.name}${s.comment ? " — " + s.comment : ""}` : ad) + (d ? ` · ${d}` : "");
+}
+// Eleman açıklaması: paletteki düğmenin açıklaması
+function elemDesc(t) {
+  const b = document.querySelector(`.tool[data-t="${t}"]`);
+  return b ? b.title.replace(/ · Kısayol:.*$/, "") : "";
 }
 
 // ======================= Adresler =======================
@@ -1209,7 +1262,8 @@ function pinValue(g) {
 }
 // Adres: {area, n} veya {area:"K", n}
 function parseAddr(s) {
-  s = String(s || "").trim().toUpperCase();
+  // Türkçe klavye: ı, i, İ hepsi I sayılır (ör. "ı4" = I4, "aİ6" = AI6)
+  s = String(s || "").trim().replace(/[ıİi]/g, "I").toUpperCase();
   let m;
   if (/^-?\d+$/.test(s)) return { area: "K", n: parseInt(s, 10), s };
   if (/^-?\d+\.\d*$/.test(s)) return { area: "K", n: parseFloat(s), s, f: true };   // ondalıklı sabit
@@ -1244,9 +1298,20 @@ function checkAddr(s, kind, where, out) {
     if (!pin) return fail(`GPIO${a.n} I/O pini değil`);
     if (a.area === "AI" && !pin.adc) return fail(`GPIO${a.n} analog değil`);
     const m = pinMode(a.n);
+    if (a.area === "PW" && pin.in) return fail(`GPIO${a.n} yalnız giriş, PWM olamaz`);
+    // Pin Pinler sekmesinde ters yönde atanmışsa hata (kapalıysa yalnız uyarı)
+    const isIn = (x) => ["DI", "DIPU", "DIPD", "AI"].includes(x), isOut = (x) => ["DO", "PWM"].includes(x);
+    const wantIn = a.area === "I" || a.area === "AI";
+    // Simülasyonda pinler yüklemede programa göre kendiliğinden ayarlanır; orada hata verme
+    const hard = m && m !== "OFF" && !isSim();
+    if (hard && (wantIn ? isOut(m) : isIn(m)))
+      return fail(`${a.s}: GPIO${a.n} Pinler sekmesinde ${MODE_LABELS[m]} olarak atanmış; ${wantIn ? "giriş" : "çıkış"} olarak kullanılamaz`);
+    if (hard && wantIn && ((a.area === "AI") !== (m === "AI")))
+      return fail(`${a.s}: GPIO${a.n} Pinler sekmesinde ${MODE_LABELS[m]}; ${a.area === "AI" ? "analog okumak için pini Analog giriş yapın" : "dijital okumak için pini Dijital giriş yapın"}`);
+    if (hard && !wantIn && ((a.area === "PW") !== (m === "PWM")))
+      return fail(`${a.s}: GPIO${a.n} Pinler sekmesinde ${MODE_LABELS[m]}; ${a.area === "PW" ? "PWM için pini PWM çıkışı yapın" : "dijital çıkış için pini Dijital çıkış yapın"}`);
     if (a.area === "I" && !["DI", "DIPU", "DIPD"].includes(m)) out.warnings.push(`${where}: ${a.s} için GPIO${a.n} dijital giriş değil (şu an ${MODE_LABELS[m]})`);
     if (a.area === "Q" && m !== "DO") out.warnings.push(`${where}: ${a.s} için GPIO${a.n} dijital çıkış değil (şu an ${MODE_LABELS[m]})`);
-    if (a.area === "PW" && pin.in) return fail(`GPIO${a.n} yalnız giriş, PWM olamaz`);
     if (a.area === "PW" && m !== "PWM") out.warnings.push(`${where}: ${a.s} için GPIO${a.n} PWM çıkışı değil (şu an ${MODE_LABELS[m]})`);
     if (a.area === "AI" && m !== "AI") out.warnings.push(`${where}: ${a.s} için GPIO${a.n} analog giriş değil (şu an ${MODE_LABELS[m]})`);
   }
@@ -1382,6 +1447,7 @@ function compile() {
       out.warnings.push(`Rung ${gi + 1}: komut üretilmedi`);
   });
   flowCheck(out);
+  ioDirCheck(out);
   if (pidNo > 16) out.errors.push(`PID sayısı ${pidNo} (en çok 16)`);
   if (mbJob > 32) out.errors.push(`Modbus kutusu sayısı ${mbJob} (en çok 32)`);
   if (edge > 128) out.errors.push(`Kenar kontak sayısı ${edge} (en çok 128)`);
@@ -1389,6 +1455,18 @@ function compile() {
   return out;
 }
 
+// Aynı GPIO programda hem giriş (I/AI) hem çıkış (Q/PW) olarak kullanılamaz
+function ioDirCheck(out) {
+  const by = {};
+  for (const x of usages()) {
+    const a = A(x.s); if (!a || !["I", "AI", "Q", "PW"].includes(a.area)) continue;
+    const e = by[a.n] || (by[a.n] = { inp: [], outp: [] });
+    (a.area === "I" || a.area === "AI" ? e.inp : e.outp).push(`${a.s} (Rung ${x.gi + 1} [${x.r + 1},${x.c + 1}])`);
+  }
+  for (const [g, e] of Object.entries(by))
+    if (e.inp.length && e.outp.length)
+      out.errors.push(`GPIO${g} hem giriş hem çıkış olarak kullanılmış: ${e.inp[0]} ve ${e.outp[0]}. Bir pin ya giriş ya çıkıştır`);
+}
 // Program akışı denetimi: etiket/alt program tekrarları, hedefler, ileri atlama, aynı bölüm, kendini çağırma
 function flowCheck(out) {
   const lbl = {}, sbr = {}, jumps = [], calls = [];
@@ -1435,6 +1513,72 @@ function crc32Bytes(bytes) {
 }
 
 // Derleme sonuçları bilgi akışına yazılır (akış en yeniyi üstte gösterdiği için özet en son yazılır)
+// Hata/uyarı açıklaması: kullanıcının ne yapması gerektiği
+function compileHint(m) {
+  const H = [
+    [/soluna bağlantı yok/, "Elemanın solu güç hattına bağlı değil. Aradaki boş hücrelere yatay çizgi koyun (H) ya da elemanı sola kaydırın (Ctrl+←)."],
+    [/adres boş/, "Elemana adres verilmemiş. Elemanı seçip Enter'a basın (veya çift tıklayın) ve adres yazın, ör. I4, Q1, M0."],
+    [/geçersiz adres/, "Adres biçimi: I4 giriş, Q1 çıkış, AI6 analog, PW7 PWM, M0 bit, T0 zamanlayıcı, C0 sayıcı, D0 sayı, F0 ondalıklı; ya da Semboller'de tanımlı bir ad. Türkçe ı/İ de I sayılır."],
+    [/burada kullanılamaz \(Q, M\)/, "Bobin, Set ve ters bobin yalnız çıkışa (Q) veya yardımcı bite (M) yazar. Girişler (I) programdan yazılamaz."],
+    [/burada kullanılamaz \(D, PW, F/, "Kutunun sonucu yalnız değişkene yazılır: D (tam sayı), F (ondalıklı), PW (PWM çıkışı) veya HC."],
+    [/burada kullanılamaz \(T\)/, "Zamanlayıcı kutusuna T0–T31 adresi verin."],
+    [/burada kullanılamaz \(C\)/, "Sayıcı kutusuna C0–C31 adresi verin."],
+    [/burada kullanılamaz/, "Bu alana bu tür adres verilemez; parantez içindeki türlerden birini kullanın."],
+    [/ondalıklı sayı burada kullanılamaz/, "Bu alan tam sayı ister (ör. 5). Ondalıklı değer için F değişkeni ve uygun kutu kullanın."],
+    [/sınır dışı/, "Numara izin verilen aralığın dışında (ör. M0–M255, T0–T31, C0–C31, D0–D63, F0–F63)."],
+    [/I\/O pini değil/, "Bu GPIO kartta giriş/çıkış olarak kullanılamaz. Pinler sekmesindeki listeden bir pin seçin."],
+    [/analog değil/, "Bu pin analog okuyamaz. Analog giriş için ADC yazan pinlerden birini seçin (GPIO1–18, 3 hariç)."],
+    [/olarak atanmış; (giriş|çıkış) olarak kullanılamaz/, "Pin, Pinler sekmesinde ters yönde ayarlı. Ya Pinler'de modunu değiştirin ya da ladder'da başka bir pin kullanın."],
+    [/Pinler sekmesinde .*(Analog giriş yapın|Dijital giriş yapın|PWM çıkışı yapın|Dijital çıkış yapın)/, "Pinler sekmesinde pinin modunu belirtilen şekilde değiştirin."],
+    [/hem giriş hem çıkış/, "Aynı GPIO aynı anda hem giriş hem çıkış olamaz. Adreslerden birini başka bir pinle değiştirin (Ctrl+F ile bulup Tümünü değiştir)."],
+    [/şu an Kapalı/, "Pin Pinler sekmesinde henüz ayarlanmamış (Kapalı). Pinler'de modunu seçin (I → Dijital giriş, Q → Dijital çıkış, AI → Analog giriş, PW → PWM çıkışı). Simülasyonda yüklerken kendiliğinden ayarlanır."],
+    [/dijital giriş değil|dijital çıkış değil|analog giriş değil|PWM çıkışı değil/, "Pinin Pinler sekmesindeki modu bu adresle uyumlu değil (I → Dijital giriş, Q → Dijital çıkış, AI → Analog giriş, PW → PWM çıkışı). Simülasyonda yüklerken kendiliğinden düzeltilir; kartta Pinler'den değiştirin."],
+    [/çift bobin/, "Aynı çıkış iki rung'da sürülürse sondaki geçerli olur. Koşulları tek rung'da paralel kontakla birleştirin veya Set/Reset kullanın."],
+    [/kullanılıyor$/, "Aynı zamanlayıcı/sayıcı iki kutuda kullanılmış; her kutuya farklı numara verin."],
+    [/çıkış elemanı yok/, "Rung'un sonunda bobin veya kutu yok; bu rung hiçbir şey yapmaz."],
+    [/JMP .*LBL|yalnız ileri|alt program sınırı/, "JMP yalnız aynı sayfada ve aşağıdaki bir LBL rung'una atlar. Rung türünden (başlık satırı) Etiket LBL n seçin."],
+    [/CALL .*SBR|kendini çağıramaz/, "Alt programı “＋ Alt program” sekmesiyle oluşturun; CALL numarası SBR numarasıyla aynı olmalı."],
+    [/numarası 0–63/, "Atlama/alt program numarası 0–63 arasında tam sayı olmalı."],
+    [/SS:DD/, "Zaman aralığı kontağında saati 07:30 gibi yazın (00:00–23:59)."],
+    [/en az bir gün/, "Zaman aralığı kontağında en az bir gün işaretleyin."],
+    [/açılış ve kapanış aynı/, "Açılış ve kapanış saatleri farklı olmalı."],
+    [/slave adresi|register 0–65535|adet|fonksiyon kodu|FC0|F için/, "Modbus kutusu ayarlarını kontrol edin: slave 1–247, register 0–65535, adet sabit sayı. F (ondalıklı) değerler 2 register kaplar."],
+    [/RS485 modu Master/, "Pinler sekmesi → RS485 bölümünde rolü Master yapın."],
+    [/Ti negatif|Td negatif/, "PID'de Ti ve Td 0 veya pozitif olmalı (0 = kapalı)."],
+    [/SCALE giriş min ve maks/, "SCALE kutusunda giriş aralığının iki ucu farklı olmalı (ör. 0 ve 3300 mV)."],
+    [/SBR .* içinde de var|LBL .* içinde de var/, "Aynı numara iki kez kullanılmış; rung başlığından birinin numarasını değiştirin."],
+    [/hiç çağrılmıyor/, "Bu alt program hiçbir CALL ile çağrılmıyor, çalışmaz. Ana programa CALL kutusu ekleyin."],
+    [/komut üretilmedi/, "Rung boş veya yalnız çizgiden oluşuyor; silin ya da eleman ekleyin."],
+    [/en çok/, "Kapasite aşıldı; program bölünmeli veya sadeleştirilmeli."],
+  ];
+  for (const [re, h] of H) if (re.test(m)) return h;
+  return "";
+}
+function showCompileDialog(res) {
+  if (!res.errors.length && !res.warnings.length) { $("compDlg").hidden = true; return; }
+  const item = (m, cls) => {
+    const mm = /^Rung (\d+)(?: \[(\d+),(\d+)\])?: (.*)$/.exec(m);
+    const rungOnly = mm && !mm[2];
+    if (rungOnly) { mm[2] = 1; mm[3] = 1; }
+    const where = !mm ? "" : rungOnly ? `Rung ${mm[1]}` : `Rung ${mm[1]}, satır ${mm[2]}, sütun ${mm[3]}`;
+    const msg = mm ? mm[4] : m, hint = compileHint(m);
+    return `<div class="cmp-item ${cls}"${mm ? ` data-go="${mm[1] - 1},${mm[2] - 1},${mm[3] - 1}"` : ""}><span class="ico">${cls === "err" ? "✕" : "!"}</span>
+      <div>${where ? `<span class="where">${where}</span> · ` : ""}${esc(msg)}${hint ? `<div class="hint">${esc(hint)}</div>` : ""}</div></div>`;
+  };
+  $("compSum").textContent = res.errors.length
+    ? `${res.errors.length} hata${res.warnings.length ? ", " + res.warnings.length + " uyarı" : ""}. Hatalar düzeltilmeden program karta yüklenemez. Satıra tıklayınca ilgili hücreye gidilir.`
+    : `Derlendi (${res.lines.length} komut), ${res.warnings.length} uyarı. Uyarılar yüklemeyi engellemez ama kontrol edin. Satıra tıklayınca ilgili hücreye gidilir.`;
+  $("compList").innerHTML = res.errors.map(m => item(m, "err")).join("") + res.warnings.map(m => item(m, "warn")).join("");
+  $("compDlg").hidden = false;
+}
+$("compClose").addEventListener("click", () => { $("compDlg").hidden = true; });
+$("compDlg").addEventListener("click", (e) => {
+  if (e.target === $("compDlg")) { $("compDlg").hidden = true; return; }
+  const it = e.target.closest("[data-go]"); if (!it) return;
+  const [g, r, c] = it.dataset.go.split(",").map(Number);
+  $("compDlg").hidden = true; goCell(g, r, c);
+});
+$("compDlg").addEventListener("keydown", (e) => { if (e.key === "Escape") $("compDlg").hidden = true; e.stopPropagation(); });
 function showCompile(res, okText) {
   for (const w of [...res.warnings].reverse()) log("Uyarı: " + w, "warn");
   for (const e of [...res.errors].reverse()) log("Hata: " + e, "error");
@@ -1505,7 +1649,7 @@ function drawCell(cell, x, y) {
   const wl = (x1, x2) => `<line class="w" x1="${x1}" y1="${ym}" x2="${x2}" y2="${ym}"/>`;
   if (t === "W") return wl(x, x + CW);
   // Fareyle üzerine gelince adres, sembol adı ve açıklama
-  const tip = `<title>${esc(ADDR_KEYS.filter(k => cell[k] != null && cell[k] !== "" && A(cell[k])?.area !== "K").map(k => tipOf(cell[k])).join("\n"))}</title>`;
+  const tip = `<title>${esc([elemDesc(t), ...ADDR_KEYS.filter(k => cell[k] != null && cell[k] !== "" && A(cell[k])?.area !== "K").map(k => tipOf(cell[k]))].filter(Boolean).join("\n"))}</title>`;
   // Sembol adı gösteriliyorsa adresi küçük yaz
   const addrNote = (v) => showNames() && symOf(v) ? `<text class="addr" x="${cx}" y="${y + 61}">${esc(A(v)?.s)}</text>` : "";
   // Zorlanmış adres: hücrenin sağ üstünde mor F
@@ -1660,7 +1804,18 @@ function renderPageTabs() {
     const lbl = p.id === -1 ? "Ana program" : `SBR ${p.id}${p.name ? " · " + esc(p.name) : ""}`;
     const warn = p.id >= 0 && !calls(p.id) ? ` title="Bu alt program hiç çağrılmıyor"` : "";
     return `<button data-page="${p.id}" class="${p.id === curPage ? "active" : ""}"${warn}>${lbl}${p.id >= 0 && !calls(p.id) ? " ⚠" : ""}${p.id >= 0 && p.id === curPage ? ` <span class="x" data-delpage="${p.id}" title="Alt programı sil">✕</span>` : ""}</button>`;
-  }).join("") + `<button class="add" data-addpage="1" title="Yeni alt program sayfası (SBR) ekle">＋ Alt program</button>`;
+  }).join("") + `<button class="add" data-addpage="1" title="Yeni alt program sayfası (SBR) ekle">＋ Alt program</button><span id="plcState" class="plc-state"></span>`;
+  updatePlcState();
+}
+// PLC durumu: ilk bakışta RUN / STOP / bağlı değil
+function updatePlcState() {
+  const el = $("plcState"); if (!el) return;
+  let cls = "", txt = "PLC BAĞLI DEĞİL", sm = "";
+  if (port && mon) { cls = mon.run ? "run" : "stop"; txt = mon.run ? "PLC RUN" : "PLC STOP"; sm = isSim() ? "simülasyon" : (mon.run ? "program çalışıyor" : "program durdu"); }
+  else if (port) { txt = "PLC bağlanıyor…"; }
+  el.className = "plc-state " + cls;
+  el.title = cls === "run" ? "PLC çalışıyor (RUN). Program değişikliği için Düzenle." : cls === "stop" ? "PLC durdu (STOP): çıkışlar kapalı. Çalıştırmak için RUN." : "Karta bağlı değil. Bağlan → kart veya Simülasyon.";
+  el.innerHTML = `<span class="dotx"></span>${txt}${sm ? ` <span class="sm">· ${sm}</span>` : ""}`;
 }
 $("pageTabs").addEventListener("click", async (e) => {
   const del = e.target.closest("[data-delpage]");
@@ -2108,7 +2263,7 @@ async function setEditMode(on, asked = false) {   // asked: kullanıcı zaten on
 function updateEditUi() {
   const b = $("btnEdit");
   b.classList.toggle("primary", editMode);
-  b.textContent = editMode ? "✓ Düzenlemeyi bitir" : "✎ Düzenle";
+  b.innerHTML = editMode ? "✓ Düzenlemeyi bitir" : `<svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg>Düzenle`;
   b.title = editMode ? "Düzenlemeyi bitir ve canlı izlemeyi aç" : "Programı düzenle: PLC STOP'a alınır, canlı izleme durur";
   document.body.classList.toggle("editing", editMode);
   document.body.classList.toggle("locked", locked());
@@ -2238,10 +2393,26 @@ function backspaceSel() {
   renderProps();
 }
 
+// Seçili elemanı komşu hücreyle yer değiştirerek kaydır (Ctrl+oklar); silmeye gerek kalmaz
+function moveCell(dr, dc) {
+  const rg = project.rungs[sel.g]; if (!rg) return;
+  const r2 = sel.r + dr, c2 = sel.c + dc;
+  if (r2 < 0 || r2 >= rg.rows || c2 < 0 || c2 >= NC) return;
+  const a = rg.cells[sel.r][sel.c];
+  if (!a) return;
+  rg.cells[sel.r][sel.c] = rg.cells[r2][c2];
+  rg.cells[r2][c2] = a;
+  sel = { g: sel.g, r: r2, c: c2 };
+  changed(sel.g);
+  renderProps();
+}
+// Dikey bağlantı seçili hücrenin SOLUNA (önceki sütunla arasına) konur
 function toggleVLink() {
   const rg = project.rungs[sel.g]; if (!rg) return;
   if (sel.r >= rg.rows - 1) { uiAlert("Dikey bağlantı için altta bir satır olmalı. Rung başlığındaki “+ satır” ile ekleyin."); return; }
-  rg.vl[sel.r][sel.c] = !rg.vl[sel.r][sel.c];
+  if (sel.c === 0) { uiAlert("1. sütunun solu güç hattıdır; satırlar orada zaten bağlıdır.\n\nParalel dalı birleştirmek için, birleşmenin olacağı yerin sağındaki hücreyi seçip V'ye basın."); return; }
+  const c = sel.c - 1;
+  rg.vl[sel.r][c] = !rg.vl[sel.r][c];
   changed(sel.g);
 }
 
@@ -2508,7 +2679,8 @@ function setConnected(ok) {
   if (!ok && $("hcRows")) [...$("hcRows").children].forEach(hcRowState);
   for (const id of RET_IDS) $(id).disabled = !ok;
   $("pwmFreq").disabled = !ok;
-  if (!ok) $("rtcBox").hidden = true;
+  if (!ok) { $("rtcBox").hidden = true; $("rtcOff").hidden = false; $("rtcOff").textContent = "Kart bağlı değil."; }
+  updatePlcState();
   if (!ok) $("diagCard").hidden = true;
   buildSimIO();
   if (!ok) $("retStat").textContent = "";
@@ -2677,6 +2849,8 @@ async function loadBoard() {
   fillHcForm();
   if (!$("tab-log").hidden) loadDiag();
   $("rtcBox").hidden = info.tm === undefined;
+  $("rtcOff").hidden = !$("rtcBox").hidden;
+  if (info.tm === undefined) $("rtcOff").textContent = "Bu firmware'de kart saati yok.";
   if (info.tm !== undefined) await syncClock(false);
   if (info.pwmf != null) {
     const pf = $("pwmFreq");
@@ -2715,6 +2889,7 @@ function onMon(msg) {
     log(`PLC ${msg.run ? "RUN" : "STOP"} moduna geçti (kart üzerindeki BOOT tuşu)`, msg.run ? "ok" : "warn");
   prevRun = !!msg.run;
   mon = msg;
+  updatePlcState();
   const b = $("runBadge");
   b.textContent = msg.run ? "RUN" : "STOP";
   b.className = "badge " + (msg.run ? "run" : "stop");
@@ -2862,7 +3037,7 @@ async function upload() {
   if (isSim()) { await simAutoPins(); lastCompile = null; }
   const res = compile();
   showCompile(res);
-  if (res.errors.length) { log("Derleme hatası, yükleme yapılmadı", "error"); return; }
+  if (res.errors.length) { log("Derleme hatası, yükleme yapılmadı", "error"); showCompileDialog(res); return; }
   if (!res.lines.length) { uiAlert("Program boş."); return; }
   busy = true;
   const btn = $("btnUpload");
@@ -3416,6 +3591,17 @@ $("portAdd").addEventListener("click", async () => {
   await connect();          // tarayıcının port seçme penceresi (COM numarası burada görünür)
 });
 
+// Bilgi akışı kutusunun boyu: alttaki tutamaç sürüklenir (40–400 px), tarayıcıda saklanır
+(() => {
+  const g = $("feedGrip"), root = document.documentElement;
+  const set = (h) => { h = Math.max(40, Math.min(400, Math.round(h))); root.style.setProperty("--feedH", h + "px"); return h; };
+  try { const h = +localStorage.getItem("mnblad.feedH"); if (h) set(h); } catch {}
+  let y0 = 0, h0 = 0, drag = false;
+  g.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); drag = true; y0 = e.clientY; h0 = $("feed").offsetHeight; g.setPointerCapture(e.pointerId); });
+  g.addEventListener("pointermove", (e) => { if (drag) set(h0 + e.clientY - y0); });
+  g.addEventListener("pointerup", () => { if (!drag) return; drag = false; try { localStorage.setItem("mnblad.feedH", $("feed").offsetHeight); } catch {} updateSticky(); });
+  g.addEventListener("dblclick", () => { root.style.removeProperty("--feedH"); try { localStorage.removeItem("mnblad.feedH"); } catch {} updateSticky(); });
+})();
 // Program menüsü (Yeni / Aç / Kaydet / Karttan al): alt alta liste
 // Bilgi akışı: basılı tut (fare veya parmak) → son 15 bilgi üst katmanda açılır; bırakınca kapanır
 (() => {
@@ -3449,7 +3635,10 @@ $("btnStop").addEventListener("click", async () => {
   try { await send("STOP"); log("STOP", "warn"); } catch {}
 });
 $("btnUpload").addEventListener("click", upload);
-$("btnCompile").addEventListener("click", () => { lastCompile = compile(); showCompile(lastCompile); });
+$("btnCompile").addEventListener("click", async () => {
+  if (editMode) { await setEditMode(false); log("Düzenleme bitirildi (Derle)"); }
+  lastCompile = compile(); showCompile(lastCompile); showCompileDialog(lastCompile);
+});
 $("chkLive").addEventListener("change", () => renderAll());
 $("btnEdit").addEventListener("click", () => setEditMode(!editMode));
 $("chkNames").addEventListener("change", () => {
@@ -4070,12 +4259,17 @@ document.addEventListener("keydown", (e) => {
     else if (k === "x") guarded(cutCell)();
     else if (k === "v") guarded(paste)();
     else if (k === "f") openXref(selCellAddr());
+    else if (["arrowleft", "arrowright", "arrowup", "arrowdown"].includes(k)) {
+      const d = { arrowleft: [0, -1], arrowright: [0, 1], arrowup: [-1, 0], arrowdown: [1, 0] }[k];
+      guarded(() => moveCell(d[0], d[1]))();
+    }
     else return;
     e.preventDefault();
     return;
   }
   const rg = project.rungs[sel.g]; if (!rg) return;
   let { g, r, c } = sel;
+  if (e.ctrlKey || e.metaKey) return;
   switch (e.key) {
     case "ArrowLeft": c = Math.max(0, c - 1); break;
     case "ArrowRight": c = Math.min(NC - 1, c + 1); break;
