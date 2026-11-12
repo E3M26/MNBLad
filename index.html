@@ -483,8 +483,8 @@
   #pins tr[data-kind="ai"] td:first-child { box-shadow: inset 4px 0 0 var(--k-ai); }
   #pins tr[data-kind="pwm"] td:first-child { box-shadow: inset 4px 0 0 var(--k-pwm); }
   #pins tr[data-kind="off"] { color: var(--muted); }
-  #pins .gp { font-family: ui-monospace, Consolas, monospace; font-weight: 700; margin-right: 6px; }
-  #pins .pins-pills { display: inline-flex; gap: 4px; flex-wrap: wrap; vertical-align: middle; }
+  .gp { font-family: ui-monospace, Consolas, monospace; font-weight: 700; margin-right: 6px; }
+  .pins-pills { display: inline-flex; gap: 4px; flex-wrap: wrap; vertical-align: middle; }
   .apill { display: inline-block; min-width: 46px; text-align: center; padding: 2px 8px; border-radius: 6px; font: 700 .86em ui-monospace, Consolas, monospace; }
   .apill.in { color: var(--k-in); background: color-mix(in srgb, var(--k-in) 13%, transparent); }
   .apill.out { color: var(--k-out); background: color-mix(in srgb, var(--k-out) 13%, transparent); }
@@ -506,6 +506,69 @@
   .pwrange::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--card); border: 3px solid var(--rc); }
   .pwrange:disabled { opacity: .45; cursor: not-allowed; }
   .pwq { padding: 3px 7px; font-size: .8em; margin-left: 3px; }
+  /* Pinler: kullanılmayanlar tablosu + tür grupları + sürüklenebilir kartlar */
+  .pin-h { font-size: .95em; margin: 4px 0 8px; display: flex; align-items: center; gap: 8px; }
+  .pin-free { max-height: 330px; overflow: auto; }
+  .pin-free table { margin: 0; }
+  tr.pfree { cursor: grab; user-select: none; }
+  tr.pfree td.grip, .pcard .grip { color: var(--muted); cursor: grab; touch-action: none; font-size: 1.15em; width: 22px; text-align: center; user-select: none; }
+  tr.pfree td.assign { white-space: nowrap; }
+  .as { --kc: var(--off); padding: 3px 10px; margin-right: 4px; font-size: .85em; border-left: 4px solid var(--kc); }
+  .as[data-as="in"] { --kc: var(--k-in); } .as[data-as="out"] { --kc: var(--k-out); } .as[data-as="pwm"] { --kc: var(--k-pwm); } .as[data-as="ai"] { --kc: var(--k-ai); }
+  .as:hover:not(:disabled) { background: color-mix(in srgb, var(--kc) 14%, var(--card)); border-color: var(--kc); }
+  .pin-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px; margin-top: 16px; align-items: start; }
+  .pgrp { --kc: var(--off); border: 1px solid var(--line); border-top: 4px solid var(--kc); border-radius: 12px; padding: 10px;
+          background: color-mix(in srgb, var(--kc) 6%, var(--card)); display: flex; flex-direction: column; gap: 8px; min-height: 140px; }
+  .pgrp[data-zone="in"] { --kc: var(--k-in); } .pgrp[data-zone="out"] { --kc: var(--k-out); }
+  .pgrp[data-zone="pwm"] { --kc: var(--k-pwm); } .pgrp[data-zone="ai"] { --kc: var(--k-ai); }
+  .pgrp header { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--kc); }
+  .pgrp header i { width: 10px; height: 10px; border-radius: 50%; background: var(--kc); }
+  .pgrp header small { color: var(--muted); font-weight: 500; }
+  .pgrp header .n { margin-left: auto; }
+  .pg-list { display: flex; flex-direction: column; gap: 8px; }
+  .pg-empty { border: 2px dashed color-mix(in srgb, var(--kc, var(--line)) 45%, transparent); border-radius: 10px; padding: 18px 10px; text-align: center; color: var(--muted); font-size: .86em; }
+  .pin-free .pg-empty { margin: 8px; }
+  .dropzone.over { outline: 3px dashed var(--kc, var(--accent)); outline-offset: 3px; }
+  .pin-free.over { outline-color: var(--off); }
+  .pcard { --kc: var(--off); background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--kc); border-radius: 10px;
+           padding: 8px 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, .06); cursor: grab; user-select: none; }
+  .pcard[data-kind="in"] { --kc: var(--k-in); } .pcard[data-kind="out"] { --kc: var(--k-out); }
+  .pcard[data-kind="pwm"] { --kc: var(--k-pwm); } .pcard[data-kind="ai"] { --kc: var(--k-ai); }
+  .pcard.ins { box-shadow: 0 -5px 0 -1px var(--kc); }
+  .pcard.dragging, tr.pfree.dragging { opacity: .3; }
+  .pghost { position: fixed; z-index: 80; pointer-events: none; opacity: .95; transform: rotate(1.5deg); box-shadow: 0 12px 30px rgba(0, 0, 0, .25); }
+  body.pdragging, body.pdragging * { cursor: grabbing !important; }
+  .pc-h { display: flex; align-items: center; gap: 8px; }
+  .pc-h .gp { font: 700 1.02em ui-monospace, Consolas, monospace; }
+  .pc-sym { flex: 1; min-width: 0; color: var(--muted); font-size: .86em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pc-x { padding: 1px 7px; font-size: .8em; color: var(--muted); }
+  .pc-x:hover:not(:disabled) { color: var(--err); border-color: var(--err); }
+  .pc-b { display: flex; align-items: center; gap: 10px; margin-top: 7px; }
+  .pc-mode { flex: 1; min-width: 0; }
+  .pc-val { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pc-val .meterx { width: 60px; }
+  .pc-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 7px; }
+  .pc-ctl .pwrange { flex: 1 1 100px; margin: 0; width: auto; }
+  .pc-ctl .pwqs { display: flex; gap: 3px; flex-basis: 100%; }
+  .pc-ctl .pwq { margin: 0; flex: 1; }
+  #pinsCard.locked .pcard, #pinsCard.locked tr.pfree { cursor: default; }
+  #pinsCard.locked .grip { opacity: .3; }
+  /* Fonksiyon seçici (F + numara) */
+  .fnpop { position: fixed; z-index: 70; width: min(440px, calc(100vw - 16px)); background: var(--card); border: 1px solid var(--accent); border-radius: 12px;
+           box-shadow: 0 10px 34px rgba(0, 0, 0, .3); padding: 10px; }
+  .fn-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  #fnQ { width: 100%; font-size: 1.05em; padding: 7px 10px; }
+  .fn-list { max-height: 330px; overflow: auto; margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .fn-it { display: flex; align-items: center; gap: 8px; text-align: left; padding: 4px 6px; border-color: transparent; background: none; font-size: .9em; min-width: 0; }
+  .fn-it .no { flex: none; min-width: 26px; text-align: center; font: 700 .9em ui-monospace, Consolas, monospace; color: #fff; background: var(--accent); border-radius: 5px; padding: 1px 4px; }
+  .fn-it .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+  .fn-it .ty { flex: none; font: 600 .78em ui-monospace, Consolas, monospace; color: var(--muted); }
+  .fn-it.act, .fn-it:hover { background: var(--acc-soft); border-color: var(--accent); }
+  .fn-sec { grid-column: 1 / -1; font-size: .75em; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 6px 0 0; }
+  kbd.k.fn { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+  /* Sanal G/Ç sol sütunda */
+  .ladder-side #simIO .sio { grid-template-columns: 46px minmax(0, 1fr) auto; }
+  .ladder-side #simIO .sio .ctl input[type=range] { width: 96px; }
   /* Semboller, Trend, Kayıt, Ayarlar */
   .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
   .toolbar .grow { flex: 1 1 200px; }
@@ -657,6 +720,11 @@
     <div class="dlg-btns"><button id="compClose" class="primary">Kapat</button></div>
   </div>
 </div>
+<div id="fnPop" class="fnpop" hidden role="dialog" aria-label="Fonksiyon ekle">
+  <div class="fn-h"><b>Fonksiyon ekle</b><span class="tag">numarayı yazın · Enter ekler · Esc kapatır</span></div>
+  <input id="fnQ" placeholder="Numara veya ad (ör. 1, TON, ölçek)" autocomplete="off" inputmode="search">
+  <div id="fnList" class="fn-list"></div>
+</div>
 <div id="dlg" class="dlg-back" hidden>
   <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
     <div class="dlg-head"><span id="dlgIcon" class="dlg-ic"></span><h3 id="dlgTitle"></h3></div>
@@ -767,6 +835,7 @@
         Adres yerine Semboller sekmesindeki adlar da yazılabilir.
         Tek tuş: <code>A</code> açık kontak, <code>K</code> kapalı kontak, <code>P</code>/<code>N</code> yükselen/düşen kenar, <code>C</code> karşılaştırma,
         <code>B</code> bobin, <code>T</code> ters bobin, <code>S</code> set, <code>R</code> reset, <code>H</code> veya <code>-</code> yatay çizgi, <code>V</code> veya <code>|</code> dikey bağlantı,
+        <code>F</code> + numara: diğer fonksiyonlar (paletteki <code>F·1</code>, <code>F·2</code> … rozetleri; ör. F, 1 = TON),
         <code>Enter</code> adres düzenle, oklar gezin, <code>Del</code> seçili hücreyi sil, <code>Backspace</code> soldaki hücreyi silerek geri git, <code>Ctrl+oklar</code> seçili elemanı kaydır. Dikey bağlantı seçili hücrenin <b>soluna</b> konur.
         Alt programlar üstteki sayfa sekmelerinde (＋ Alt program).
         Kısayollar: <code>Ctrl+Z/Y</code> geri al/yinele, <code>Ctrl+C/X/V</code> kopyala/kes/yapıştır, <code>Ctrl+F</code> bul / çapraz referans.
@@ -780,6 +849,11 @@
       <summary class="tag">Derlenmiş komut listesi</summary>
       <pre id="ilView" class="il"></pre>
     </details>
+    <div class="card" id="simIO" hidden>
+      <h2>Sanal giriş / çıkış <span class="simtag">SİMÜLASYON</span></h2>
+      <p class="tag" style="margin-top:0">Programdaki girişleri buradan verin: anahtar 0/1, <b>Bas</b> basılı tuttukça 1 (buton gibi), analog için kaydırıcı. RUN'dayken rung'daki bir I kontağına tıklamak da girişi değiştirir.</p>
+      <div id="simIOList"></div>
+    </div>
    </aside>
 
    <div class="splitter" id="splitter" title="Sürükleyerek sol alanın genişliğini değiştir (çift tık: varsayılan)"></div>
@@ -797,11 +871,6 @@
    <div class="splitter" id="splitter2" title="Sürükleyerek izleme tablosunun genişliğini değiştir (çift tık: varsayılan)"></div>
 
    <aside class="ladder-side ladder-watch">
-    <div class="card" id="simIO" hidden style="margin-bottom:14px">
-      <h2>Sanal giriş / çıkış <span class="simtag">SİMÜLASYON</span></h2>
-      <p class="tag" style="margin-top:0">Programdaki girişleri buradan verin: anahtar 0/1, <b>Bas</b> basılı tuttukça 1 (buton gibi), analog için kaydırıcı. RUN'dayken rung'daki bir I kontağına tıklamak da girişi değiştirir.</p>
-      <div id="simIOList"></div>
-    </div>
     <div class="card">
       <h2>İzleme tablosu</h2>
       <div class="row">
@@ -1073,20 +1142,24 @@
         <b>−2</b> bozuk yanıt / CRC · <b>−3</b> master kapalı · <b>−4</b> geçersiz istek.</p>
       </details>
     </div>
-    <div class="card" style="margin-top:14px">
-      <h2>Pinler</h2>
-      <div class="pin-tools">
-        <div class="seg" id="pinFilter">
-          <button data-pf="all" class="active">Tümü</button><button data-pf="used">Kullanılanlar</button><button data-pf="in">Girişler</button>
-          <button data-pf="out">Çıkışlar</button><button data-pf="pwm">PWM</button><button data-pf="ai">Analog</button>
-        </div>
-        <div class="pin-sum" id="pinSum"></div>
-      </div>
-      <div class="table-wrap">
+    <div class="card" style="margin-top:14px" id="pinsCard">
+      <h2>Pinler <span class="h-r pin-sum" id="pinSum"></span></h2>
+      <p class="note" style="margin:0 0 12px">Kullanılmayan bir pini <b>Giriş / Çıkış / PWM / Analog</b> düğmesiyle atayın ya da satırı tutup aşağıdaki gruba sürükleyin.
+        Atanan pin kendi grubunda kart olur. Kartı sürükleyerek başka gruba (mod değişir), grup içinde başka sıraya veya kullanılmayan listesine (pin kapanır) taşıyabilirsiniz.
+        Dokunmatik ekranda <b>⠿</b> tutamacından tutun. Pin ayarı yalnız STOP'ta değişir.</p>
+      <h3 class="pin-h">Kullanılmayan pinler <span id="pinFreeN" class="pill"></span></h3>
+      <div class="table-wrap pin-free dropzone" data-zone="off">
         <table>
-          <thead><tr><th>GPIO</th><th>Adres</th><th>Mod</th><th>Değer</th><th>Elle kumanda</th></tr></thead>
-          <tbody id="pins"><tr><td colspan="5" class="tag">Bağlantı bekleniyor…</td></tr></tbody>
+          <thead><tr><th></th><th>GPIO</th><th>Özellik</th><th>Ata</th></tr></thead>
+          <tbody id="pinsFree"><tr><td colspan="4" class="tag">Bağlantı bekleniyor…</td></tr></tbody>
         </table>
+        <div id="pinFreeEmpty" class="pg-empty" hidden>Bütün pinler kullanılıyor. Kartı buraya bırakırsanız pin kapanır.</div>
+      </div>
+      <div class="pin-groups">
+        <section class="pgrp dropzone" data-zone="in"><header><i></i>Girişler <small>I · dijital</small><span class="n pill"></span></header><div class="pg-list" id="pg-in"></div><div class="pg-empty">Giriş yok. Pini buraya sürükleyin.</div></section>
+        <section class="pgrp dropzone" data-zone="out"><header><i></i>Çıkışlar <small>Q · dijital</small><span class="n pill"></span></header><div class="pg-list" id="pg-out"></div><div class="pg-empty">Çıkış yok. Pini buraya sürükleyin.</div></section>
+        <section class="pgrp dropzone" data-zone="pwm"><header><i></i>PWM <small>PW · 0–1000 ‰</small><span class="n pill"></span></header><div class="pg-list" id="pg-pwm"></div><div class="pg-empty">PWM çıkışı yok. Pini buraya sürükleyin.</div></section>
+        <section class="pgrp dropzone" data-zone="ai"><header><i></i>Analog <small>AI · mV</small><span class="n pill"></span></header><div class="pg-list" id="pg-ai"></div><div class="pg-empty">Analog giriş yok. ADC pinini buraya sürükleyin.</div></section>
       </div>
     </div>
   </section>
@@ -1319,6 +1392,76 @@ function tipOf(addr) {
   const ad = a?.s || addr, d = addrDesc(a);
   return (s ? `${ad} = ${s.name}${s.comment ? " — " + s.comment : ""}` : ad) + (d ? ` · ${d}` : "");
 }
+// ---- Fonksiyon numaraları: tek tuş kısayolu olmayan elemanlara 1'den başlayarak numara; F + numara ile eklenir ----
+const FN_LIST = [];
+document.querySelectorAll("#toolbar .tool[data-t]").forEach(b => {
+  if (b.querySelector("kbd.k")) return;
+  const no = FN_LIST.length + 1, x = b.cloneNode(true);
+  x.querySelectorAll(".sym, kbd").forEach(n => n.remove());
+  FN_LIST.push({ no, t: b.dataset.t, name: x.textContent.trim(), grp: b.closest("details")?.querySelector("summary")?.textContent.trim() || "" });
+  b.insertAdjacentHTML("beforeend", `<kbd class="k fn" title="F tuşu, sonra ${no}">F·${no}</kbd>`);
+  b.title += ` · Kısayol: F, sonra ${no}`;
+});
+let fnAct = 0, fnShown = [];
+function fnMatches(q) {
+  q = q.trim().toLocaleLowerCase("tr");
+  if (!q) return FN_LIST;
+  if (/^\d+$/.test(q)) return FN_LIST.filter(x => String(x.no).startsWith(q));
+  return FN_LIST.filter(x => (x.t + " " + x.name + " " + x.grp).toLocaleLowerCase("tr").includes(q));
+}
+function renderFnList() {
+  const q = $("fnQ").value;
+  fnShown = fnMatches(q);
+  if (/^\d+$/.test(q.trim())) { const ex = fnShown.findIndex(x => String(x.no) === q.trim()); fnAct = ex >= 0 ? ex : 0; }
+  fnAct = Math.min(fnAct, Math.max(0, fnShown.length - 1));
+  let grp = "";
+  $("fnList").innerHTML = fnShown.length ? fnShown.map((x, k) => {
+    const h = x.grp !== grp && !q.trim() ? `<div class="fn-sec">${esc(x.grp)}</div>` : "";
+    grp = x.grp;
+    return h + `<button class="fn-it${k === fnAct ? " act" : ""}" data-fn="${k}" title="${esc(x.t)}"><span class="no">${x.no}</span><span class="nm">${esc(x.name)}</span><span class="ty">${esc(x.t)}</span></button>`;
+  }).join("") : '<div class="tag" style="grid-column:1/-1;padding:6px">Eşleşen fonksiyon yok.</div>';
+  $("fnList").querySelector(".fn-it.act")?.scrollIntoView({ block: "nearest" });
+}
+function openFnPicker() {
+  if (!project.rungs[sel.g]) return;
+  const p = $("fnPop");
+  $("fnQ").value = ""; fnAct = 0;
+  renderFnList();
+  p.hidden = false;
+  const svg = document.querySelector(`svg.rung-svg[data-g="${sel.g}"]`), b = svg?.getBoundingClientRect();
+  const k = b ? svg.viewBox.baseVal.width / b.width : 1;
+  let x = b ? b.left + (LX + CW * sel.c) / k : 200, y = b ? b.top + RH * (sel.r + 1) / k + 6 : 200;
+  const w = p.offsetWidth, h = p.offsetHeight;
+  if (x + w > innerWidth - 8) x = innerWidth - 8 - w;
+  if (y + h > innerHeight - 8) y = Math.max(8, (b ? b.top + RH * sel.r / k : y) - h - 6);
+  p.style.left = Math.max(8, x) + "px"; p.style.top = y + "px";
+  $("fnQ").focus();
+}
+function closeFnPicker() { $("fnPop").hidden = true; }
+function chooseFn(x) {
+  closeFnPicker();
+  if (!x) return;
+  guarded(() => placeTool(x.t))();
+  log(`F${x.no}: ${x.name} eklendi`);
+}
+$("fnQ").addEventListener("input", () => {
+  renderFnList();
+  // Numara tek bir fonksiyonu gösteriyorsa (başka numara bununla başlamıyorsa) hemen ekle
+  const q = $("fnQ").value.trim();
+  if (/^\d+$/.test(q) && fnShown.length === 1 && String(fnShown[0].no) === q) chooseFn(fnShown[0]);
+});
+$("fnPop").addEventListener("keydown", (e) => {
+  e.stopPropagation();
+  if (e.key === "Escape") { e.preventDefault(); closeFnPicker(); }
+  else if (e.key === "Enter") { e.preventDefault(); chooseFn(fnShown[fnAct]); }
+  else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    if (fnShown.length) { fnAct = (fnAct + (e.key === "ArrowDown" ? 1 : -1) + fnShown.length) % fnShown.length; renderFnList(); }
+  }
+});
+$("fnList").addEventListener("click", (e) => { const b = e.target.closest("[data-fn]"); if (b) chooseFn(fnShown[+b.dataset.fn]); });
+document.addEventListener("mousedown", (e) => { if (!$("fnPop").hidden && !e.target.closest("#fnPop")) closeFnPicker(); });
+
 // Fareyle elemanın üzerine gelince anlık açıklama balonu. Rung çizimi canlı izlemede sürekli yenilendiği için
 // tarayıcının title balonu açılamıyordu; balon ayrı bir katmanda durur.
 const cellTip = document.createElement("div");
@@ -2190,7 +2333,7 @@ function selCell() {
   return rg ? rg.cells[sel.r]?.[sel.c] : null;
 }
 // Tek tuşla temel semboller (seçili hücreye yerleşir; kontak/bobin sonrası adres kutusu açılır)
-const KEYS = { a: "NO", k: "NC", p: "P", n: "N", b: "OUT", t: "OUTN", s: "SET", r: "RST", "-": "W", h: "W", "|": "|", v: "|", c: "CMP" };
+const KEYS = { f: "FN", a: "NO", k: "NC", p: "P", n: "N", b: "OUT", t: "OUTN", s: "SET", r: "RST", "-": "W", h: "W", "|": "|", v: "|", c: "CMP" };
 function setSel(g, r, c) {
   const old = sel.g;
   sel = { g, r, c };
@@ -2416,7 +2559,7 @@ function updateEditUi() {
 async function ensureEdit() {
   // STOP'ta (veya bağlı değilken) bir düzenleme başlayınca Düzenleme modu kendiliğinden açılır
   if (!locked()) { if (!editMode) { await setEditMode(true); log("Düzenleme moduna geçildi"); } return true; }
-  if (!await uiConfirm("PLC çalışıyor (RUN). Programı değiştirmek için Düzenle moduna geçilsin mi?\nPLC STOP konumuna alınır, program durur ve çıkışlar kapanır.", { kind: "danger", ok: "Düzenle moduna geç" })) return false;
+  if (!isSim() && !await uiConfirm("PLC çalışıyor (RUN). Programı değiştirmek için Düzenle moduna geçilsin mi?\nPLC STOP konumuna alınır, program durur ve çıkışlar kapanır.", { kind: "danger", ok: "Düzenle moduna geç" })) return false;
   return await setEditMode(true, true);
 }
 const guarded = (fn) => async (...a) => { if (await ensureEdit()) return fn(...a); };
@@ -3078,44 +3221,83 @@ function onMon(msg) {
 }
 
 // ======================= Pin tablosu =======================
+// ======================= Pinler: kullanılmayan pinler listesi + tür gruplarında sürüklenebilir kartlar =======================
+// Kullanılmayan (Kapalı) pinler üstteki tabloda; atanan pin kendi grubunda (Giriş / Çıkış / PWM / Analog) kart olur.
+// Kart/satır fare veya parmakla sürüklenir: başka gruba bırakınca mod değişir, grup içinde sıra değişir,
+// kullanılmayan listesine bırakınca pin kapanır. Sürükleme Pointer Events ile (fare + dokunmatik).
+const pinKind = (m) => ["DI", "DIPU", "DIPD"].includes(m) ? "in" : m === "DO" ? "out" : m === "AI" ? "ai" : m === "PWM" ? "pwm" : "off";
+const KIND_MODE = { in: "DI", out: "DO", pwm: "PWM", ai: "AI", off: "OFF" };
+const KIND_NAME = { in: "Giriş", out: "Çıkış", pwm: "PWM", ai: "Analog", off: "Kullanılmayan" };
+const KINDS = ["in", "out", "pwm", "ai"];
+const pinEl = [];
+let pinOrder = [];
+try { pinOrder = JSON.parse(localStorage.getItem("mnblad.pinOrder")) || []; } catch {}
+const savePinOrder = () => { try { localStorage.setItem("mnblad.pinOrder", JSON.stringify(pinOrder)); } catch {} };
+function pinAllowed(pin, kind) {
+  if (kind === "off") return true;
+  if (!info.modes.includes(KIND_MODE[kind])) return false;
+  if (kind === "ai") return !!pin.adc;
+  if (kind === "out" || kind === "pwm") return !pin.in;
+  return true;
+}
+const pinAddr = (g, kind) => ({ in: `I${g}`, out: `Q${g}`, ai: `AI${g}`, pwm: `PW${g}` })[kind] || "";
+const pinPills = (pin) => `${pin.name ? `<span class="pill acc">${esc(pin.name)}</span>` : ""}${pin.adc ? '<span class="pill">ADC</span>' : ""}${pin.in ? '<span class="pill">yalnız giriş</span>' : ""}`;
+
+async function setPinMode(i, m) {
+  const pin = info.pins[i], prev = modes[i];
+  if (m === prev) { renderPinRow(i); return true; }
+  if (mon?.run) { uiAlert("Pin ayarı yalnız STOP'ta değiştirilebilir. Önce PLC'yi STOP konumuna alın."); renderPinRow(i); return false; }
+  try {
+    await send(`PIN ${pin.g} ${m}`);
+    modes[i] = m;
+    log(`GPIO${pin.g} → ${MODE_LABELS[m]}`);
+    lastCompile = null;
+  } catch {}
+  renderPinRow(i);
+  return modes[i] === m;
+}
+
 function buildPinTable() {
-  const tb = $("pins");
-  tb.innerHTML = "";
+  $("pinsFree").innerHTML = "";
+  for (const k of KINDS) $("pg-" + k).innerHTML = "";
+  pinEl.length = 0;
   info.pins.forEach((pin, i) => {
-    const tr = document.createElement("tr");
-    const sel = document.createElement("select");
+    // Kullanılmayan pin satırı
+    const row = document.createElement("tr");
+    row.className = "pfree"; row.dataset.i = i;
+    row.innerHTML = `<td class="grip" title="Tutup aşağıdaki gruba sürükleyin">⠿</td><td><span class="gp">GPIO${pin.g}</span></td>
+      <td><span class="pins-pills">${pinPills(pin)}</span></td>
+      <td class="assign">${KINDS.map(k => `<button class="as" data-as="${k}"${pinAllowed(pin, k) ? "" : " disabled"} title="${pinAllowed(pin, k) ? `GPIO${pin.g} → ${KIND_NAME[k]} (${pinAddr(pin.g, k)})` : `GPIO${pin.g} ${KIND_NAME[k].toLocaleLowerCase("tr")} olamaz`}">${KIND_NAME[k]}</button>`).join("")}</td>`;
+    row.addEventListener("click", (e) => { const b = e.target.closest("[data-as]"); if (b) setPinMode(i, KIND_MODE[b.dataset.as]); });
+    row.addEventListener("pointerdown", (e) => pinDragStart(e, i, row));
+    // Atanmış pin kartı
+    const card = document.createElement("div");
+    card.className = "pcard"; card.dataset.i = i;
+    card.innerHTML = `<div class="pc-h"><span class="grip" title="Sürükle: başka gruba, grup içinde başka sıraya veya kullanılmayan listesine">⠿</span>
+      <span class="gp">GPIO${pin.g}</span><span class="apill"></span><span class="pc-sym"></span>
+      <button class="pc-x" title="Pini kapat (kullanılmayanlara geri gönder)">✕</button></div>
+      <div class="pc-b"><select class="pc-mode" title="Pin modu"></select><span class="pc-val"></span></div>
+      <div class="pc-ctl"></div>`;
+    const sel = card.querySelector(".pc-mode");
     for (const m of info.modes) {
+      if (m === "OFF") continue;
       if (m === "AI" && !pin.adc) continue;
       if ((m === "DO" || m === "PWM") && pin.in) continue;
-      const o = document.createElement("option");
-      o.value = m; o.textContent = MODE_LABELS[m] || m;
-      sel.appendChild(o);
+      sel.add(new Option(MODE_LABELS[m] || m, m));
     }
-    sel.value = modes[i];
-    sel.addEventListener("change", async () => {
-      const prev = modes[i];
-      try {
-        await send(`PIN ${pin.g} ${sel.value}`);
-        modes[i] = sel.value;
-        log(`GPIO${pin.g} → ${MODE_LABELS[sel.value]}`);
-        renderPinRow(i);
-        lastCompile = null;
-      } catch { sel.value = prev; }
-    });
+    sel.addEventListener("change", () => setPinMode(i, sel.value));
+    card.querySelector(".pc-x").addEventListener("click", () => setPinMode(i, "OFF"));
+    card.addEventListener("pointerdown", (e) => pinDragStart(e, i, card));
+    // Elle kumanda: Aç/Kapat (simülasyonda giriş 1/0), PWM değer kutusu + kaydırıcı + yüzde düğmeleri
     const btn = document.createElement("button");
     btn.textContent = "Aç";
     btn.addEventListener("click", async () => {
       const next = btn.dataset.state === "1" ? 0 : 1;
-      // Simülasyonda dijital giriş: girişe değer ver (RUN'da da)
       const di = ["DI", "DIPU", "DIPD"].includes(modes[i]);
       try { await send(isSim() && di ? `SIMIN ${pin.g} ${next}` : `SET ${pin.g} ${next}`); } catch {}
     });
-    tr.innerHTML = `<td><span class="gp">GPIO${pin.g}</span><span class="pins-pills">${pin.name ? `<span class="pill acc">${esc(pin.name)}</span>` : ""}${pin.adc ? '<span class="pill">ADC</span>' : ""}${pin.in ? '<span class="pill">yalnız giriş</span>' : ""}</span></td><td class="addr"></td>`;
-    const tdMode = document.createElement("td"); tdMode.appendChild(sel);
-    const tdVal = document.createElement("td"); tdVal.className = "val";
     const pw = document.createElement("input");
     pw.type = "number"; pw.min = 0; pw.max = 1000; pw.step = 10; pw.className = "pwin";
-    pw.title = "Elle PWM (0–1000 ‰), yalnız STOP"; pw.placeholder = "0–1000";
     pw.addEventListener("change", async () => {
       if (modes[i] === "AI") {   // simülasyon: analog giriş değeri (mV)
         const v = Math.max(0, Math.min(info.aimax || 3000, Math.round(+pw.value || 0)));
@@ -3127,12 +3309,11 @@ function buildPinTable() {
       pw.value = v;
       try { await send(`SET ${pin.g} ${v}`); log(`GPIO${pin.g} PWM → ${pwmText(v)}`); } catch {}
     });
-    // Kaydırıcı (PWM 0–1000 ‰, simülasyonda analog mV) ve hızlı yüzde düğmeleri
     const rg = document.createElement("input");
     rg.type = "range"; rg.className = "pwrange"; rg.min = 0; rg.max = 1000; rg.step = 10;
     const rgFill = () => rg.style.setProperty("--p", (+rg.value / (+rg.max || 1000) * 100) + "%");
-    rg.addEventListener("input", () => { pw.value = rg.value; rgFill(); });
     rg.fill = rgFill;
+    rg.addEventListener("input", () => { pw.value = rg.value; rgFill(); });
     rg.addEventListener("change", () => { pw.value = rg.value; pw.dispatchEvent(new Event("change")); });
     pw.addEventListener("change", () => { rg.value = pw.value; rgFill(); });
     const qs = document.createElement("span"); qs.className = "pwqs";
@@ -3141,95 +3322,168 @@ function buildPinTable() {
       b.addEventListener("click", () => { pw.value = p * 10; pw.dispatchEvent(new Event("change")); });
       qs.appendChild(b);
     }
-    const tdOut = document.createElement("td"); tdOut.append(btn, pw, rg, qs);
-    tr.append(tdMode, tdVal, tdOut);
-    tb.appendChild(tr);
+    card.querySelector(".pc-ctl").append(btn, pw, rg, qs);
+    pinEl[i] = { row, card, sel, btn, pw, rg, qs, val: card.querySelector(".pc-val") };
     renderPinRow(i);
   });
   pinSummary();
 }
-// Pin türü (renk şeridi ve süzgeç için)
-const pinKind = (m) => ["DI", "DIPU", "DIPD"].includes(m) ? "in" : m === "DO" ? "out" : m === "AI" ? "ai" : m === "PWM" ? "pwm" : "off";
-let pinFilter = "all";
-function pinVisible(k) { return pinFilter === "all" || (pinFilter === "used" ? k !== "off" : k === pinFilter); }
-function pinSummary() {
-  if (!info?.pins) { $("pinSum").innerHTML = ""; return; }
-  const n = { in: 0, out: 0, ai: 0, pwm: 0, off: 0 };
-  info.pins.forEach((p, i) => n[pinKind(modes[i])]++);
-  const L = [["in", "giriş"], ["out", "çıkış"], ["ai", "analog"], ["pwm", "PWM"], ["off", "kapalı"]];
-  $("pinSum").innerHTML = L.map(([k, t]) => `<span class="pill"><i style="background:${k === "off" ? "var(--off)" : "var(--k-" + k + ")"}"></i>${n[k]} ${t}</span>`).join("");
+
+// Öğeyi kaba sıralı yerleştir (sıra anahtarı küçük olan önce)
+function placeSorted(box, el, key) {
+  const k = key(el);
+  const next = [...box.children].find(x => x !== el && key(x) > k);
+  if (el.parentNode !== box || el.nextElementSibling !== next) box.insertBefore(el, next || null);
 }
-$("pinFilter").addEventListener("click", (e) => {
-  const b = e.target.closest("[data-pf]"); if (!b) return;
-  pinFilter = b.dataset.pf;
-  document.querySelectorAll("#pinFilter button").forEach(x => x.classList.toggle("active", x === b));
-  if (info?.pins) info.pins.forEach((p, i) => renderPinRow(i));
-});
+const pinIdxKey = (el) => +el.dataset.i;
+const pinOrderKey = (el) => { const g = info.pins[+el.dataset.i].g, o = pinOrder.indexOf(g); return (o < 0 ? 1e6 : o * 100) + g / 100; };
 
 function renderPinRow(i) {
-  const tr = $("pins").children[i];
-  if (!tr) return;
-  const g = info.pins[i].g, m = modes[i];
-  const kind = pinKind(m), ad = { in: `I${g}`, out: `Q${g}`, ai: `AI${g}`, pwm: `PW${g}` }[kind];
-  tr.dataset.kind = kind;
-  tr.hidden = !pinVisible(kind);
-  tr.children[1].innerHTML = ad ? `<span class="apill ${kind}" title="Ladder'da bu adresle kullanılır">${ad}</span>` : "";
+  const E = pinEl[i]; if (!E) return;
+  const pin = info.pins[i], m = modes[i], kind = pinKind(m), g = pin.g;
+  if (kind === "off") { E.card.remove(); placeSorted($("pinsFree"), E.row, pinIdxKey); }
+  else { E.row.remove(); placeSorted($("pg-" + kind), E.card, pinOrderKey); }
+  E.card.dataset.kind = kind;
+  const ad = pinAddr(g, kind);
+  const ap = E.card.querySelector(".apill");
+  ap.className = "apill " + kind; ap.textContent = ad; ap.title = "Ladder'da bu adresle kullanılır";
+  const sym = ad ? symOf(ad) : null;
+  E.card.querySelector(".pc-sym").textContent = sym ? sym.name : "";
+  E.card.querySelector(".pc-sym").title = sym?.comment || "";
+  if (kind !== "off") E.sel.value = m;
+  const simDi = isSim() && kind === "in", simAi = isSim() && kind === "ai";
+  E.btn.hidden = kind !== "out" && !simDi;
+  E.pw.hidden = kind !== "pwm" && !simAi;
+  E.pw.max = simAi ? (info.aimax || 3000) : 1000;
+  E.pw.step = simAi ? 50 : 10;
+  E.pw.placeholder = simAi ? "mV" : "0–1000";
+  E.pw.title = simAi ? "Simülasyon: analog giriş (0–3000 mV)" : "Elle PWM (0–1000 ‰), yalnız STOP";
+  E.rg.hidden = E.pw.hidden; E.rg.max = E.pw.max; E.rg.step = E.pw.step; E.rg.title = E.pw.title;
+  E.rg.classList.toggle("ai", simAi); E.rg.fill();
+  E.qs.hidden = kind !== "pwm";
+  E.card.querySelector(".pc-ctl").hidden = E.btn.hidden && E.pw.hidden;
+  E.val.innerHTML = '<span class="tag">—</span>';
   pinSummary();
-  const simDi = isSim() && ["DI", "DIPU", "DIPD"].includes(m), simAi = isSim() && m === "AI";
-  tr.children[4].firstChild.hidden = m !== "DO" && !simDi;
-  const pw = tr.children[4].children[1];
-  pw.hidden = m !== "PWM" && !simAi;
-  pw.max = simAi ? (info.aimax || 3000) : 1000;
-  pw.step = simAi ? 50 : 10;
-  pw.placeholder = simAi ? "mV" : "0–1000";
-  pw.title = simAi ? "Simülasyon: analog giriş (0–3000 mV)" : "Elle PWM (0–1000 ‰), yalnız STOP";
-  const rg = tr.children[4].children[2], qs = tr.children[4].children[3];
-  rg.hidden = pw.hidden; rg.max = pw.max; rg.step = pw.step; rg.classList.toggle("ai", simAi);
-  rg.title = pw.title;
-  rg.fill?.();
-  qs.hidden = m !== "PWM";
-  tr.children[3].innerHTML = m === "OFF" ? '<span class="tag">—</span>' : "";
+}
+
+function pinSummary() {
+  if (!info?.pins) return;
+  const n = { in: 0, out: 0, ai: 0, pwm: 0, off: 0 };
+  info.pins.forEach((p, i) => n[pinKind(modes[i])]++);
+  $("pinSum").innerHTML = [...KINDS, "off"].map(k => `<span class="pill"><i style="background:${k === "off" ? "var(--off)" : "var(--k-" + k + ")"}"></i>${n[k]} ${KIND_NAME[k].toLocaleLowerCase("tr")}</span>`).join("");
+  for (const k of KINDS) {
+    const box = $("pg-" + k).closest(".pgrp");
+    box.querySelector(".n").textContent = n[k];
+    box.querySelector(".pg-empty").hidden = n[k] > 0;
+  }
+  $("pinFreeN").textContent = n.off;
+  $("pinFreeEmpty").hidden = n.off > 0;
 }
 
 function updatePinValues(v, running) {
   if (!info) return;
+  $("pinsCard").classList.toggle("locked", !!running);
   v.forEach((val, i) => {
-    const tr = $("pins").children[i];
-    if (!tr) return;
-    tr.children[2].firstChild.disabled = running;
-    const td = tr.children[3];
+    const E = pinEl[i]; if (!E) return;
+    E.sel.disabled = running;
+    E.card.querySelector(".pc-x").disabled = running;
+    E.row.querySelectorAll(".as").forEach(b => { b.disabled = running || !pinAllowed(info.pins[i], b.dataset.as); });
     const m = modes[i];
     if (m === "OFF" || val < 0) return;
     if (m === "PWM") {
-      td.innerHTML = `${pwmText(val)}<span class="meterx"><i style="width:${Math.min(100, val / 10)}%"></i></span>`;
-      const pw = tr.children[4].children[1], rg = tr.children[4].children[2];
-      pw.disabled = running; rg.disabled = running;
-      tr.children[4].children[3].querySelectorAll("button").forEach(b => b.disabled = running);
-      if (document.activeElement !== pw) pw.value = val;
-      if (document.activeElement !== rg) { rg.value = val; rg.fill?.(); }
+      E.val.innerHTML = `${pwmText(val)}<span class="meterx"><i style="width:${Math.min(100, val / 10)}%"></i></span>`;
+      E.pw.disabled = running; E.rg.disabled = running;
+      E.qs.querySelectorAll("button").forEach(b => b.disabled = running);
+      if (document.activeElement !== E.pw) E.pw.value = val;
+      if (document.activeElement !== E.rg) { E.rg.value = val; E.rg.fill(); }
     } else if (m === "AI") {
       const w = Math.max(0, Math.min(100, val / (info.aimax || 3000) * 100));
-      td.innerHTML = `${(val / 1000).toFixed(3)} V<span class="meterx ai"><i style="width:${w}%"></i></span>`;
-      const pw = tr.children[4].children[1], rg = tr.children[4].children[2];
-      if (isSim() && document.activeElement !== pw) pw.value = val;
-      if (isSim() && document.activeElement !== rg) { rg.value = val; rg.fill?.(); }
+      E.val.innerHTML = `${(val / 1000).toFixed(3)} V<span class="meterx ai"><i style="width:${w}%"></i></span>`;
+      if (isSim() && document.activeElement !== E.pw) E.pw.value = val;
+      if (isSim() && document.activeElement !== E.rg) { E.rg.value = val; E.rg.fill(); }
     } else {
-      td.innerHTML = `<span class="lamp ${val ? "on" : ""}"></span>${val ? "1" : "0"}`;
-      if (m === "DO") {
-        const btn = tr.children[4].firstChild;
-        btn.dataset.state = String(val);
-        btn.textContent = val ? "Kapat" : "Aç";
-        btn.disabled = running;
-      } else if (isSim()) {      // simülasyonda dijital giriş düğmesi
-        const btn = tr.children[4].firstChild;
-        btn.dataset.state = String(val);
-        btn.textContent = val ? "0 yap" : "1 yap";
-        btn.title = "Simülasyon: girişi değiştir";
-        btn.disabled = false;
-      }
+      E.val.innerHTML = `<span class="lamp ${val ? "on" : ""}"></span>${val ? "1" : "0"}`;
+      E.btn.dataset.state = String(val);
+      if (m === "DO") { E.btn.textContent = val ? "Kapat" : "Aç"; E.btn.disabled = running; }
+      else if (isSim()) { E.btn.textContent = val ? "0 yap" : "1 yap"; E.btn.title = "Simülasyon: girişi değiştir"; E.btn.disabled = false; }
     }
   });
 }
+
+// ---- Sürükle-bırak (fare + parmak) ----
+let pdrag = null;
+function pinDragStart(e, i, el) {
+  if (e.button > 0 || pdrag) return;
+  if (e.target.closest("button, select, input")) return;          // kontrollerden sürükleme başlamaz
+  if (e.pointerType !== "mouse" && !e.target.closest(".grip")) return;   // dokunmatikte tutamaçtan (sayfa kaydırması bozulmasın)
+  pdrag = { i, el, id: e.pointerId, x0: e.clientX, y0: e.clientY, on: false, zone: null, before: null };
+}
+function pinDragClear() {
+  document.querySelectorAll(".dropzone.over").forEach(z => z.classList.remove("over"));
+  document.querySelectorAll(".pcard.ins").forEach(z => z.classList.remove("ins"));
+}
+document.addEventListener("pointermove", (e) => {
+  const d = pdrag; if (!d || e.pointerId !== d.id) return;
+  if (!d.on) {
+    if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 6) return;
+    if (mon?.run) { pdrag = null; log("Pin ayarı yalnız STOP'ta değiştirilebilir", "warn"); return; }
+    d.on = true;
+    const r = d.el.getBoundingClientRect();
+    d.dx = d.x0 - r.left; d.dy = d.y0 - r.top;
+    const gh = d.el.tagName === "TR" ? document.createElement("div") : d.el.cloneNode(true);
+    if (d.el.tagName === "TR") { gh.className = "pcard"; gh.innerHTML = `<div class="pc-h"><span class="grip">⠿</span><span class="gp">GPIO${info.pins[d.i].g}</span></div>`; gh.style.width = "180px"; d.dx = 20; d.dy = 16; }
+    else gh.style.width = r.width + "px";
+    gh.classList.add("pghost");
+    document.body.appendChild(gh);
+    d.ghost = gh;
+    d.el.classList.add("dragging");
+    document.body.classList.add("pdragging");
+  }
+  e.preventDefault();
+  d.ghost.style.left = (e.clientX - d.dx) + "px";
+  d.ghost.style.top = (e.clientY - d.dy) + "px";
+  pinDragClear();
+  const under = document.elementFromPoint(e.clientX, e.clientY);
+  const zone = under?.closest(".dropzone") || null;
+  d.zone = zone; d.before = null;
+  if (zone) {
+    zone.classList.add("over");
+    const list = zone.querySelector(".pg-list");
+    if (list) {
+      const c = [...list.children].find(x => x !== d.el && x.getBoundingClientRect().top + x.offsetHeight / 2 > e.clientY);
+      d.before = c || null;
+      if (c) c.classList.add("ins");
+    }
+  }
+  // Kenara yaklaşınca sayfa kayar
+  if (e.clientY < 70) scrollBy(0, -14); else if (e.clientY > innerHeight - 70) scrollBy(0, 14);
+}, { passive: false });
+async function pinDragEnd(e) {
+  const d = pdrag; if (!d || e.pointerId !== d.id) return;
+  pdrag = null;
+  if (!d.on) return;
+  d.ghost.remove(); d.el.classList.remove("dragging"); document.body.classList.remove("pdragging");
+  pinDragClear();
+  if (!d.zone || e.type === "pointercancel") return;
+  const kind = d.zone.dataset.zone, pin = info.pins[d.i];
+  if (!pinAllowed(pin, kind)) {
+    uiAlert(`GPIO${pin.g} ${KIND_NAME[kind].toLocaleLowerCase("tr")} olarak kullanılamaz: ${kind === "ai" ? "bu pin analog (ADC) değil" : "bu pin yalnız giriş"}.`);
+    return;
+  }
+  if (kind !== "off") {   // grup içindeki sıra
+    const list = $("pg-" + kind);
+    const gs = [...list.children].filter(x => x !== d.el).map(x => info.pins[+x.dataset.i].g);
+    const at = d.before ? gs.indexOf(info.pins[+d.before.dataset.i].g) : gs.length;
+    gs.splice(at < 0 ? gs.length : at, 0, pin.g);
+    pinOrder = [...gs, ...pinOrder.filter(g => !gs.includes(g))];
+    savePinOrder();
+  }
+  const cur = pinKind(modes[d.i]);
+  if (cur === kind) renderPinRow(d.i);
+  else await setPinMode(d.i, KIND_MODE[kind]);
+}
+document.addEventListener("pointerup", pinDragEnd);
+document.addEventListener("pointercancel", pinDragEnd);
 
 // ======================= Yükleme / RUN / STOP =======================
 const UPLOAD_HTML = document.getElementById("btnUpload").innerHTML;
@@ -4321,7 +4575,7 @@ $("btnAddRung").addEventListener("click", async () => {
 // Çift tıklama: elemanın adreslerini yerinde düzenle.
 // Tarayıcının dblclick olayı kullanılmıyor: ilk tıklama hücreyi seçip rung çizimini yeniliyor (SVG değişiyor),
 // bu yüzden ikinci tıklama yeni öğeye düşüyor ve dblclick hiç gelmiyor. Aynı hücreye 450 ms içinde 2. tıklama = çift tıklama.
-let lastTap = null;
+let lastTap = null, simTapT = 0;
 $("cellPop").addEventListener("click", (e) => {
   const a = e.target.dataset.pop;
   if (a === "ok") closeCellEditor(true);
@@ -4362,8 +4616,18 @@ $("rungs").addEventListener("click", async (e) => {
     if (c >= 0 && c < NC && r >= 0 && r < project.rungs[g].rows) {
       // Simülasyon RUN'dayken I kontağına tıklamak girişi değiştirir
       const cl = project.rungs[g].cells[r][c], ia = cl && CONTACTS.includes(cl.t) ? A(cl.a) : null;
-      if (isSim() && mon?.run && ia?.area === "I") { lastTap = null; simSetInput(ia.n, !pinValue(ia.n)); return; }
       const now = performance.now();
+      // Simülasyon RUN'da I kontağına tek tık girişi değiştirir; çift tık düzenlemeye geçer.
+      // Tek tık kısa bir süre bekletilir: ikinci tık gelirse giriş değiştirilmez.
+      if (isSim() && mon?.run && ia?.area === "I") {
+        clearTimeout(simTapT);
+        if (lastTap && lastTap.g === g && lastTap.r === r && lastTap.c === c && now - lastTap.t < 450) {
+          lastTap = null; openCellEditor(g, r, c, e.clientX, e.clientY); return;
+        }
+        lastTap = { g, r, c, t: now };
+        simTapT = setTimeout(() => simSetInput(ia.n, !pinValue(ia.n)), 320);
+        return;
+      }
       if (lastTap && lastTap.g === g && lastTap.r === r && lastTap.c === c && now - lastTap.t < 450) {
         lastTap = null;
         openCellEditor(g, r, c, e.clientX, e.clientY);
@@ -4494,7 +4758,7 @@ document.addEventListener("keydown", (e) => {
       const t = KEYS[e.key] ?? KEYS[e.key.toLowerCase()];
       if (!t) return;
       e.preventDefault();
-      if (t === "|") guarded(toggleVLink)(); else guarded(() => placeTool(t))();
+      if (t === "|") guarded(toggleVLink)(); else if (t === "FN") openFnPicker(); else guarded(() => placeTool(t))();
       return;
     }
   }
