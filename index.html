@@ -553,6 +553,23 @@
   .pc-ctl .pwq { margin: 0; flex: 1; }
   #pinsCard.locked .pcard, #pinsCard.locked tr.pfree { cursor: default; }
   #pinsCard.locked .grip { opacity: .3; }
+  /* Cihaz profili */
+  .devbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 10px 12px; margin: 0 0 12px; border: 1px solid var(--line); border-radius: 10px;
+            background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 9%, var(--card)), var(--card)); }
+  .dev-ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--accent); color: #fff; flex: none; }
+  .dev-ic svg.ic { width: 22px; height: 22px; --ic-acc: rgba(255, 255, 255, .7); }
+  .dev-l { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .dev-l > small { color: var(--muted); font-size: .8em; }
+  #devName { font-size: 1.08em; }
+  .pill.okp { color: var(--on); background: color-mix(in srgb, var(--on) 12%, transparent); border-color: color-mix(in srgb, var(--on) 35%, transparent); }
+  .pill.warnp { color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); border-color: color-mix(in srgb, var(--warn) 35%, transparent); }
+  #devDlg .dlg { width: min(560px, calc(100vw - 32px)); }
+  .devform { display: grid; gap: 10px; }
+  .devform label { display: grid; gap: 4px; font-weight: 600; font-size: .92em; }
+  .devform input { font-weight: 400; padding: 7px 10px; }
+  .devform input.bad { border-color: var(--err); }
+  .devopts { display: grid; gap: 6px; margin: 4px 0 12px; }
+  .devopts label { display: flex; align-items: center; gap: 8px; font-size: .92em; }
   /* Fonksiyon seçici (F + numara) */
   .fnpop { position: fixed; z-index: 70; width: min(440px, calc(100vw - 16px)); background: var(--card); border: 1px solid var(--accent); border-radius: 12px;
            box-shadow: 0 10px 34px rgba(0, 0, 0, .3); padding: 10px; }
@@ -718,6 +735,24 @@
     <div id="compSum" class="tag"></div>
     <div id="compList" class="cmp-list"></div>
     <div class="dlg-btns"><button id="compClose" class="primary">Kapat</button></div>
+  </div>
+</div>
+<div id="devDlg" class="dlg-back" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="devTitle">
+    <div class="dlg-head"><span class="dlg-ic"><svg class="ic" aria-hidden="true"><use href="#i-chip"/></svg></span><h3 id="devTitle">Cihaz olarak kaydet</h3></div>
+    <div class="devform">
+      <label>Cihaz adı<input id="devNm" maxlength="60" placeholder="ör. BTN 8 Röle Kartı V1.2" autocomplete="off"></label>
+      <label>Açıklama<input id="devNt" maxlength="200" placeholder="ör. 8 röle çıkışı, 8 optokuplörlü giriş, RS485" autocomplete="off"></label>
+    </div>
+    <p id="devSum" class="note"></p>
+    <div class="devopts">
+      <span class="tag">Dosyaya ayrıca:</span>
+      <label><input type="checkbox" id="devOptKart" checked> Kart ayarları (giriş filtresi, PWM frekansı, LED pini)</label>
+      <label><input type="checkbox" id="devOptMb" checked> RS485 ayarı (mod, hız, TX/RX/DE pinleri)</label>
+      <label><input type="checkbox" id="devOptHc" checked> Hızlı sayıcı ayarı</label>
+      <label><input type="checkbox" id="devOptSym" checked> <span>Pinlerin sembol adları (<b id="devSymN">0</b> adet, ör. Q1 = Röle_1)</span></label>
+    </div>
+    <div class="dlg-btns"><button id="devCancel">Vazgeç</button><button id="devOk" class="primary">Dosyaya kaydet</button></div>
   </div>
 </div>
 <div id="fnPop" class="fnpop" hidden role="dialog" aria-label="Fonksiyon ekle">
@@ -1144,6 +1179,13 @@
     </div>
     <div class="card" style="margin-top:14px" id="pinsCard">
       <h2>Pinler <span class="h-r pin-sum" id="pinSum"></span></h2>
+      <div class="devbar">
+        <span class="dev-ic"><svg class="ic" aria-hidden="true"><use href="#i-chip"/></svg></span>
+        <div class="dev-l"><small>Cihaz (kart tasarımı)</small><div><b id="devName">Kayıtlı cihaz yok</b> <span id="devState" class="pill" hidden></span></div><small id="devNote"></small></div>
+        <button id="btnDevSave" title="Seçili pin düzenini cihaz adıyla dosyaya kaydet">Cihaz olarak kaydet…</button>
+        <button id="btnDevLoad" class="primary" title="Kayıtlı cihaz dosyasını açıp pin düzenini karta aktar">Cihaz dosyası aç…</button>
+        <input id="devFile" type="file" accept=".json,application/json" hidden>
+      </div>
       <p class="note" style="margin:0 0 12px">Kullanılmayan bir pini <b>Giriş / Çıkış / PWM / Analog</b> düğmesiyle atayın ya da satırı tutup aşağıdaki gruba sürükleyin.
         Atanan pin kendi grubunda kart olur. Kartı sürükleyerek başka gruba (mod değişir), grup içinde başka sıraya veya kullanılmayan listesine (pin kapanır) taşıyabilirsiniz.
         Dokunmatik ekranda <b>⠿</b> tutamacından tutun. Pin ayarı yalnız STOP'ta değişir.</p>
@@ -3378,6 +3420,7 @@ function pinSummary() {
   }
   $("pinFreeN").textContent = n.off;
   $("pinFreeEmpty").hidden = n.off > 0;
+  updateDevBar();
 }
 
 function updatePinValues(v, running) {
@@ -3484,6 +3527,170 @@ async function pinDragEnd(e) {
 }
 document.addEventListener("pointerup", pinDragEnd);
 document.addEventListener("pointercancel", pinDragEnd);
+
+// ======================= Cihaz profili: pin düzenini cihaz adıyla dosyaya kaydet / dosyadan karta uygula =======================
+// Giriş-çıkışları sabit kart tasarımları için. Dosya: <ad>.mnblad-cihaz.json
+// { type: "mnblad-cihaz", v: 1, name, note, saved, fw, pins: { gpio: mod }, kart?, rs485?, hc?, symbols? }
+// Dosyada olmayan pinler uygulamada kapatılır (kart, dosyadaki düzenin aynısı olur).
+const DEV_KEY = "mnblad.device";
+let device = null;
+try { device = JSON.parse(localStorage.getItem(DEV_KEY)); } catch {}
+const sortKeys = (o) => JSON.stringify(Object.entries(o || {}).sort((a, b) => a[0] - b[0]));
+function curPinMap() {
+  const o = {};
+  info.pins.forEach((p, i) => { if (modes[i] && modes[i] !== "OFF") o[p.g] = modes[i]; });
+  return o;
+}
+function updateDevBar() {
+  $("devName").textContent = device?.name || "Kayıtlı cihaz yok";
+  $("devNote").textContent = device?.note || "Pinleri seçip “Cihaz olarak kaydet” ile dosyaya kaydedin; başka zaman “Cihaz dosyası aç” ile karta aktarın.";
+  const st = $("devState");
+  if (!device || !info?.pins) { st.hidden = true; return; }
+  const same = sortKeys(curPinMap()) === sortKeys(device.pins);
+  st.hidden = false;
+  st.textContent = same ? "✓ pinler cihazla aynı" : "pinler değişti";
+  st.className = "pill " + (same ? "okp" : "warnp");
+  st.title = same ? "Karttaki pin düzeni bu cihaz dosyasıyla aynı" : "Karttaki pin düzeni bu cihazdan farklı: yeniden kaydedin veya cihaz dosyasını tekrar açın";
+}
+const devCounts = (pm) => { const c = { in: 0, out: 0, pwm: 0, ai: 0 }; Object.values(pm).forEach(m => { const k = pinKind(m); if (k in c) c[k]++; }); return c; };
+const devCountTxt = (c) => `${c.in} giriş, ${c.out} çıkış, ${c.pwm} PWM, ${c.ai} analog`;
+// Atanmış pinlerin adreslerine verilmiş sembol adları (ör. Q1 = Röle_1)
+function pinSyms(pm) {
+  const out = [];
+  for (const [g, m] of Object.entries(pm)) {
+    const ad = pinAddr(+g, pinKind(m)), s = ad && symOf(ad);
+    if (s?.name) out.push({ addr: ad, name: s.name, comment: s.comment || "" });
+  }
+  return out;
+}
+
+$("btnDevSave").addEventListener("click", () => {
+  if (!info?.pins) { uiAlert("Önce karta bağlanın (veya Bağlan → Simülasyon)."); return; }
+  const pm = curPinMap(), n = Object.keys(pm).length;
+  if (!n) { uiAlert("Hiç pin atanmamış. Önce pinleri seçin (Giriş / Çıkış / PWM / Analog)."); return; }
+  $("devNm").value = device?.name || "";
+  $("devNt").value = device?.note || "";
+  $("devSum").textContent = `${n} pin kaydedilecek: ${devCountTxt(devCounts(pm))}. Kullanılmayan pinler kaydedilmez; dosya açılınca kapatılır.`;
+  $("devOptMb").closest("label").hidden = !info.mbc;
+  $("devOptHc").closest("label").hidden = !info.hcc;
+  const ss = pinSyms(pm);
+  $("devOptSym").closest("label").hidden = !ss.length;
+  $("devSymN").textContent = ss.length;
+  $("devDlg").hidden = false;
+  $("devNm").focus();
+});
+$("devCancel").addEventListener("click", () => { $("devDlg").hidden = true; });
+$("devDlg").addEventListener("keydown", (e) => {
+  e.stopPropagation();
+  if (e.key === "Escape") $("devDlg").hidden = true;
+  else if (e.key === "Enter" && e.target.tagName === "INPUT" && e.target.type !== "checkbox") $("devOk").click();
+});
+$("devOk").addEventListener("click", () => {
+  const name = $("devNm").value.trim();
+  if (!name) { $("devNm").focus(); $("devNm").classList.add("bad"); return; }
+  $("devNm").classList.remove("bad");
+  const pm = curPinMap();
+  const d = { type: "mnblad-cihaz", v: 1, name, note: $("devNt").value.trim(), saved: new Date().toISOString(), fw: info.fw || "", pins: pm };
+  if ($("devOptKart").checked) d.kart = { filt: +$("filterMs").value, pwmf: info.pwmf != null ? +$("pwmFreq").value : null, led: +$("ledPin").value };
+  if (info.mbc && $("devOptMb").checked) { const c = info.mbc; d.rs485 = { mode: c.mode, addr: c.addr, baud: c.baud, par: c.par, tx: c.tx, rx: c.rx, de: c.de, to: c.to ?? null }; }
+  if (info.hcc && $("devOptHc").checked) d.hc = info.hcc.map(x => [...x]);
+  if ($("devOptSym").checked) { const ss = pinSyms(pm); if (ss.length) d.symbols = ss; }
+  const blob = new Blob([JSON.stringify(d, null, 1)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (name.replace(/[\\/:*?"<>|]+/g, "_").trim() || "cihaz") + ".mnblad-cihaz.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  device = { name, note: d.note, pins: pm };
+  try { localStorage.setItem(DEV_KEY, JSON.stringify(device)); } catch {}
+  $("devDlg").hidden = true;
+  updateDevBar();
+  log(`Cihaz kaydedildi: ${name} (${Object.keys(pm).length} pin) → ${a.download}`, "ok");
+});
+
+$("btnDevLoad").addEventListener("click", () => {
+  if (!port || !info?.pins) { uiAlert("Cihaz dosyasını karta aktarmak için önce karta bağlanın (veya Bağlan → Simülasyon)."); return; }
+  $("devFile").click();
+});
+$("devFile").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  let d;
+  try { d = JSON.parse(await f.text()); } catch { uiAlert("Dosya okunamadı (geçerli JSON değil)."); return; }
+  await applyDevice(d, f.name);
+});
+
+async function applyDevice(d, fname = "") {
+  if (d?.type !== "mnblad-cihaz" || !d.pins || typeof d.pins !== "object") { uiAlert("Bu bir MNBLad cihaz dosyası değil" + (fname ? ` (${fname})` : "") + "."); return false; }
+  const n = Object.keys(d.pins).length, c = devCounts(d.pins);
+  const now = curPinMap(), off = Object.keys(now).filter(g => !(g in d.pins)).length;
+  let msg = `“${d.name || "adsız"}” cihazı karta aktarılsın mı?` + (d.note ? `\n${d.note}` : "") + `\n\n• ${n} pin: ${devCountTxt(c)}`;
+  if (off) msg += `\n• Kartta şu an atanmış ${off} pin dosyada yok: kapatılacak`;
+  if (d.kart) msg += `\n• Kart ayarları: giriş filtresi ${d.kart.filt ? d.kart.filt + " ms" : "kapalı"}${d.kart.pwmf ? ", PWM " + d.kart.pwmf + " Hz" : ""}, LED GPIO${d.kart.led}`;
+  if (d.rs485) msg += info.mbc ? `\n• RS485: ${d.rs485.mode ? MB_MODES[d.rs485.mode] + `, ${d.rs485.baud} bps, TX GPIO${d.rs485.tx} / RX GPIO${d.rs485.rx}` : "kapalı"}` : "\n• RS485 ayarı bu kartta/simülasyonda yok: atlanacak";
+  if (d.hc) msg += info.hcc ? `\n• Hızlı sayıcı: ${d.hc.filter(x => x[0]).length} sayıcı açık` : "\n• Hızlı sayıcı bu kartta/simülasyonda yok: atlanacak";
+  if (d.symbols?.length) msg += `\n• ${d.symbols.length} pin sembol adı programa eklenecek`;
+  if (mon?.run) msg += "\n\nPLC RUN'da: STOP konumuna alınacak, program durur ve çıkışlar kapanır.";
+  if (!await uiConfirm(msg, { ok: "Karta aktar", ...(mon?.run ? { kind: "danger" } : {}) })) return false;
+
+  const bad = [];
+  const tryCmd = async (cmd, what) => { try { await send(cmd); return true; } catch (e) { bad.push(`${what}: ${e.message}`); return false; } };
+  if (mon?.run) { if (!await tryCmd("STOP", "STOP")) { uiAlert("PLC STOP konumuna alınamadı; cihaz aktarılmadı."); return false; } if (mon) mon.run = 0; }
+  // Önce hızlı sayıcılar kapatılır (pinleri RS485'e veya başka sayıcıya geçebilsin), sonra RS485, sonra sayıcılar kurulur
+  if (d.hc && info.hcc) for (let k = 0; k < info.hcc.length; k++) if (info.hcc[k][0]) await tryCmd(`HCCFG ${k} 0 -1 -1 0`, `HC${k} kapatma`);
+  if (d.rs485 && info.mbc) {
+    const r = d.rs485;
+    await tryCmd(`MBCFG ${r.mode} ${r.addr} ${r.baud} ${r.par} ${r.tx} ${r.rx} ${r.de}${info.mbc.to != null && r.to != null ? " " + r.to : ""}`, "RS485");
+  }
+  if (d.hc && info.hcc) for (let k = 0; k < Math.min(d.hc.length, info.hcc.length); k++) {
+    const [m, a, b, ft] = d.hc[k];
+    if (m) await tryCmd(`HCCFG ${k} ${m} ${a} ${m >= 2 ? b : -1} ${ft || 0}`, `HC${k}`);
+  }
+  info = await send("INFO");
+  modes = (await send("CFG")).m;
+  // Pinler: dosyadaki mod, dosyada olmayan → Kapalı
+  for (let i = 0; i < info.pins.length; i++) {
+    const pin = info.pins[i], want = d.pins[pin.g] || "OFF", k = pinKind(want);
+    if (modes[i] === want) continue;
+    if (want !== "OFF" && (!MODE_LABELS[want] || !pinAllowed(pin, k))) { bad.push(`GPIO${pin.g}: ${MODE_LABELS[want] || want} bu pinde kullanılamaz`); continue; }
+    if (await tryCmd(`PIN ${pin.g} ${want}`, `GPIO${pin.g}`)) modes[i] = want;
+  }
+  for (const g of Object.keys(d.pins)) if (!info.pins.some(p => p.g === +g)) bad.push(`GPIO${g}: bu kartta I/O pini değil (RS485 veya hızlı sayıcıya ayrılmış olabilir)`);
+  if (d.kart) {
+    if (d.kart.filt != null && info.filt != null) await tryCmd("FILTER " + d.kart.filt, "Giriş filtresi");
+    if (d.kart.pwmf && info.pwmf != null && d.kart.pwmf !== info.pwmf) await tryCmd("PWMF " + d.kart.pwmf, "PWM frekansı");
+    if (d.kart.led != null && d.kart.led !== info.led) await tryCmd("LED " + d.kart.led, "LED pini");
+  }
+  // Panel formlarını kartın yeni durumuyla yenile
+  info = await send("INFO");
+  modes = (await send("CFG")).m;
+  $("ledPin").value = String(info.led);
+  if (info.filt != null) { const fs = $("filterMs"); if (![...fs.options].some(o => o.value === String(info.filt))) fs.add(new Option(info.filt + " ms", info.filt)); fs.value = String(info.filt); }
+  if (info.pwmf != null) { const pf = $("pwmFreq"); if (![...pf.options].some(o => +o.value === info.pwmf)) pf.add(new Option(info.pwmf + " Hz", info.pwmf)); pf.value = String(info.pwmf); }
+  // Sembol adları: olmayanlar eklenir; aynı adreste farklı ad varsa veya ad başka adreste kullanılıyorsa dokunulmaz
+  let symAdd = 0, symSkip = 0;
+  if (d.symbols?.length) {
+    const list = symbols();
+    for (const s of d.symbols) {
+      if (!s?.addr || !s?.name) continue;
+      const ex = list.find(x => parseAddr(x.addr)?.s === parseAddr(s.addr)?.s);
+      if (ex) { if (ex.name !== s.name) symSkip++; continue; }
+      if (list.some(x => x.name === s.name)) { symSkip++; continue; }
+      list.push({ addr: s.addr, name: s.name, comment: s.comment || "" }); symAdd++;
+    }
+    if (symAdd) { changed(); buildSymbols(); }
+  }
+  buildPinTable(); fillMbForm(); fillHcForm();
+  lastCompile = null; renderAll(); refreshAddrList2();
+  if (!isSim()) try { localStorage.setItem("mnblad.lastPins", JSON.stringify(Object.fromEntries(info.pins.map((p, i) => [p.g, modes[i]])))); } catch {}
+  device = { name: d.name || "adsız", note: d.note || "", pins: d.pins };
+  try { localStorage.setItem(DEV_KEY, JSON.stringify(device)); } catch {}
+  updateDevBar();
+  log(`Cihaz aktarıldı: ${device.name} (${n} pin${symAdd ? ", " + symAdd + " sembol" : ""})${bad.length ? " · " + bad.length + " sorun" : ""}`, bad.length ? "warn" : "ok");
+  if (symSkip) log(`${symSkip} sembol eklenmedi: aynı adres veya ad programda zaten farklı tanımlı`, "warn");
+  if (bad.length) uiAlert("Cihaz aktarıldı, ancak bazı ayarlar yapılamadı:\n\n• " + bad.join("\n• "));
+  return !bad.length;
+}
 
 // ======================= Yükleme / RUN / STOP =======================
 const UPLOAD_HTML = document.getElementById("btnUpload").innerHTML;
