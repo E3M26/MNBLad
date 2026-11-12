@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MNBLad Yardım</title>
+<style>
+  :root { --acc: #c2410c; --bg: #f5f5f4; --card: #fff; --text: #1c1917; --muted: #6b6560; --line: #e7e5e4; --code: #f1efed; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --acc: #ea580c; --bg: #121110; --card: #1c1a19; --text: #ede9e6; --muted: #a8a19b; --line: #2f2b29; --code: #262321; } }
+  :root[data-theme="dark"] { --acc: #ea580c; --bg: #121110; --card: #1c1a19; --text: #ede9e6; --muted: #a8a19b; --line: #2f2b29; --code: #262321; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: var(--card); border-bottom: 1px solid var(--line); }
+  header b { font-size: 17px; } header .tag { color: var(--muted); font-size: 13px; }
+  header input { margin-left: auto; width: min(320px, 50vw); padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font: inherit; }
+  .wrap { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 24px; max-width: 1280px; margin: 0 auto; padding: 18px; }
+  nav { position: sticky; top: 64px; align-self: start; max-height: calc(100vh - 80px); overflow: auto; font-size: 13.5px; }
+  nav a { display: block; padding: 4px 10px; color: var(--text); text-decoration: none; border-left: 3px solid transparent; border-radius: 0 6px 6px 0; }
+  nav a.s { padding-left: 22px; color: var(--muted); font-size: 12.5px; }
+  nav a:hover, nav a.on { background: color-mix(in srgb, var(--acc) 12%, transparent); border-left-color: var(--acc); }
+  main { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 32px 40px; min-width: 0; }
+  h1 { font-size: 28px; margin: 18px 0 8px; } h2 { font-size: 22px; margin: 34px 0 10px; padding-top: 8px; border-top: 3px solid var(--acc); }
+  h3 { font-size: 17px; margin: 26px 0 8px; } h2, h3 { scroll-margin-top: 70px; }
+  a { color: var(--acc); }
+  code { background: var(--code); padding: 1px 5px; border-radius: 4px; font: 13px ui-monospace, Consolas, monospace; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 24px 0; }
+  .tw { overflow-x: auto; margin: 10px 0 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+  th { background: color-mix(in srgb, var(--acc) 10%, var(--card)); }
+  figure { margin: 14px 0 20px; } figure img { max-width: 100%; border: 1px solid var(--line); border-radius: 10px; display: block; }
+  .wl { font-weight: 600; }
+  mark { background: color-mix(in srgb, var(--acc) 35%, transparent); color: inherit; }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } nav { position: static; max-height: none; } main { padding: 4px 16px 30px; } }
+</style>
+</head>
+<body>
+<header><b>MNBLad Yardım</b><span class="tag">Kullanma kılavuzu</span><input id="q" placeholder="Kılavuzda ara…" autocomplete="off"></header>
+<div class="wrap">
+<nav id="toc"><a href="#1-başlarken">1. Başlarken</a><a class="s" href="#gerekenler">Gerekenler</a><a class="s" href="#paneli-açma">Paneli açma</a><a class="s" href="#karta-bağlanma">Karta bağlanma</a><a href="#2-ekran-düzeni">2. Ekran düzeni</a><a href="#3-ilk-program">3. İlk program</a><a href="#4-adresler">4. Adresler</a><a href="#5-ladder-sembolleri">5. Ladder sembolleri</a><a class="s" href="#51-kontaklar">5.1 Kontaklar</a><a class="s" href="#52-bağlantılar">5.2 Bağlantılar</a><a class="s" href="#53-bobinler">5.3 Bobinler</a><a class="s" href="#54-zamanlayıcılar">5.4 Zamanlayıcılar</a><a class="s" href="#55-sayıcılar">5.5 Sayıcılar</a><a class="s" href="#56-matematik">5.6 Matematik</a><a class="s" href="#57-kelime-mantığı">5.7 Kelime mantığı</a><a class="s" href="#58-analog-ölçekleme-sınırlama-pid">5.8 Analog: ölçekleme, sınırlama, PID</a><a class="s" href="#59-program-akışı-atlama-ve-alt-program">5.9 Program akışı: atlama ve alt program</a><a class="s" href="#510-zaman">5.10 Zaman</a><a class="s" href="#511-haberleşme-ve-hızlı-sayıcı">5.11 Haberleşme ve hızlı sayıcı</a><a href="#6-semboller-sekmesi">6. Semboller sekmesi</a><a href="#7-bul-çapraz-referans">7. Bul / çapraz referans</a><a href="#8-izleme-tablosu-ve-trend">8. İzleme tablosu ve trend</a><a href="#9-simülasyon">9. Simülasyon</a><a href="#10-pinler-sekmesi">10. Pinler sekmesi</a><a href="#11-kayıt-sekmesi-ve-tanılama">11. Kayıt sekmesi ve tanılama</a><a href="#12-ayarlar-sekmesi">12. Ayarlar sekmesi</a><a href="#13-run-stop-boot-tuşu-ve-led">13. RUN / STOP, BOOT tuşu ve LED</a><a href="#14-klavye-kısayolları-ladder-sekmesi">14. Klavye kısayolları (Ladder sekmesi)</a><a href="#15-sorun-giderme">15. Sorun giderme</a></nav>
+<main>
+<h1>MNBLad Kullanma Kılavuzu</h1>
+<p>MNBLad, ESP32-S3 tabanlı küçük bir PLC'dir. Program, tarayıcıda çalışan bir panelden <b>ladder</b> (merdiven) diliyle yazılır ve USB kablosuyla karta yüklenir. Kart programı kendi başına çalıştırır; panel yalnız programlama, izleme ve ayar için gerekir.</p>
+<p>Görsellerdeki örnekler panelin simülasyon modunda, canlı izleme açıkken alındı: <b>yeşil</b> eleman, o anda enerji ileten / 1 olan elemandır.</p>
+<p>İlgili notlar: <span class="wl">MNBLad Özeti</span> · <span class="wl">Firmware V3 (MNBLad)</span> · <span class="wl">MNBLad Test</span> · Önceki sürüm: <span class="wl">MNBLad_V2 Sürüm Notu</span></p>
+<hr>
+<h2 id="1-başlarken">1. Başlarken</h2>
+<h3 id="gerekenler">Gerekenler</h3>
+<ul><li>Chrome veya Edge tarayıcısı (bilgisayar). Tarayıcının Web Serial özelliği kullanılır.</li><li>MNBLad kartı ve USB veri kablosu. Kartın <b>USB</b> yazan portu kullanılır (besleme + panel + firmware yükleme tek kablo).</li><li>Panel dosyaları: <code>yazilim_V3/web/</code>.</li></ul>
+<h3 id="paneli-açma">Paneli açma</h3>
+<ol start="1"><li><code>yazilim_V3/panel_baslat.bat</code> dosyasını çalıştırın. Tarayıcıda <code>http://localhost:8000</code> açılır.<br>(Web Serial güvenlik nedeniyle yalnız <code>localhost</code> veya <code>https</code> adresinde çalışır; dosyayı çift tıklayarak açmak yetmez.)</li><li>Kartı USB ile bağlayın.</li></ol>
+<h3 id="karta-bağlanma">Karta bağlanma</h3>
+<p><b>Bağlan</b> düğmesi bağlantı penceresini açar. Daha önce izin verilmiş kartlar listelenir; ilk seferde <b>＋ Yeni port seç…</b> ile kartı seçin (COM numarası tarayıcının seçim penceresinde görünür).</p>
+<figure><a href="kilavuz/mnblad-baglan.png" target="_blank"><img src="kilavuz/mnblad-baglan.png" alt="" loading="lazy"></a></figure>
+<ul><li><b>Otomatik bağlan</b> açıksa kart resetlendiğinde veya enerji gelip gittiğinde panel kendiliğinden yeniden bağlanır.</li><li>Kart RUN'dayken bağlanırsanız panel, düzenleme için STOP'a alınıp alınmayacağını sorar. &quot;RUN'da kalsın&quot; derseniz program çalışmaya devam eder.</li><li>Bağlanınca kartın saati PC saatine ayarlanır.</li><li><b>▶ Simülasyon</b>: kart olmadan programı tarayıcıda çalıştırır (bkz. <a href="#9-simülasyon">Bölüm 9</a>).</li></ul>
+<hr>
+<h2 id="2-ekran-düzeni">2. Ekran düzeni</h2>
+<figure><a href="kilavuz/mnblad-genel.png" target="_blank"><img src="kilavuz/mnblad-genel.png" alt="" loading="lazy"></a></figure>
+<div class="tw"><table><thead><tr><th>Alan</th><th>Görevi</th></tr></thead><tbody><tr><td>Üst çubuk</td><td>Bağlantı durumu, otomatik bağlan, RUN/STOP göstergesi, scan süresi, işlemci sıcaklığı ve bellek doluluğu</td></tr><tr><td>Bilgi akışı kutusu</td><td>Yapılan her işlemin ve uyarıların kaydı (en yeni üstte). Üzerine basılı tutunca son 15 satır açılır</td></tr><tr><td>↶ ↷</td><td>Geri al / yinele (Ctrl+Z / Ctrl+Y)</td></tr><tr><td><b>Düzenle</b></td><td>RUN'daki programı değiştirmek için: onay alır, PLC'yi STOP'a alır</td></tr><tr><td><b>Derle</b></td><td>Programı denetler, hata ve uyarıları akışa yazar</td></tr><tr><td><b>PLC'ye yükle</b></td><td>Derler ve karta yükler (yalnız STOP'ta). Yüklemeden sonra PLC STOP'ta kalır</td></tr><tr><td><b>Program ▾</b></td><td>Yeni program, Aç…, Kaydet… (<code>.mnblad.json</code> dosyası), Karttan al</td></tr><tr><td><b>RUN / STOP</b></td><td>PLC'yi çalıştırır / durdurur (onay sorar)</td></tr><tr><td>Canlı izleme</td><td>Rung'larda anlık durumları gösterir</td></tr><tr><td>Sembol adları</td><td>Adres yerine sembol adını gösterir (I4 yerine &quot;Start&quot;)</td></tr><tr><td>Sekmeler</td><td>Ladder · Semboller · Trend · Pinler · Kayıt · Ayarlar</td></tr><tr><td>Sol sütun</td><td>Sembol paleti (gruplar tıklanınca açılır/kapanır)</td></tr><tr><td>Orta</td><td>Rung'lar ve sayfa sekmeleri (ana program / alt programlar)</td></tr><tr><td>Sağ sütun</td><td>İzleme tablosu</td></tr></tbody></table></div>
+<p>Sol ve sağ sütunların genişliği aradaki tutamaçla sürüklenerek değiştirilebilir.</p>
+<p><b>&quot;Editördeki program kartla farklı&quot;</b> uyarısı: editördeki program karttakiyle aynı değilse çıkar; karta geçmesi için Derle ve yükle gerekir. Kartta kayıtlı programı editöre almak için <b>Program → Karttan al</b>.</p>
+<hr>
+<h2 id="3-ilk-program">3. İlk program</h2>
+<p>Örnek: I4 butonuna basınca Q1 çıkışı yansın.</p>
+<ol start="1"><li><b>Pinler</b> sekmesinde GPIO4'ü <b>Dijital giriş</b>, GPIO1'i <b>Dijital çıkış</b> yapın (yalnız STOP'ta).</li><li><b>Ladder</b> sekmesinde Rung 1'in ilk hücresine tıklayın.</li><li><b>A</b> tuşuna basın (veya paletten &quot;Normalde açık&quot;). Adres kutusu açılır: <code>I4</code> yazıp Enter.</li><li>Seçim sağa geçer. Son sütuna tıklayıp <b>B</b> (bobin) tuşuna basın, <code>Q1</code> yazıp Enter. Aradaki boşluk yatay çizgiyle kendiliğinden dolar.</li><li><b>PLC'ye yükle</b>, ardından <b>RUN</b>.</li><li>I4'e 3,3 V verince Q1 yanar; canlı izlemede kontak ve bobin yeşil olur.</li></ol>
+<p><b>Hücre düzenleme:</b> Bir elemanın adresini değiştirmek için çift tıklayın veya seçip <b>Enter</b>'a basın.</p>
+<figure><a href="kilavuz/mnblad-hucre.png" target="_blank"><img src="kilavuz/mnblad-hucre.png" alt="" loading="lazy"></a></figure>
+<p><b>Silme:</b> <b>Delete</b> seçili hücreyi siler; <b>Backspace</b> soldaki hücreyi silip seçimi oraya alır (metin siler gibi). Rung işlemleri her rung'un yanındaki düğmelerle yapılır: + satır, − satır, Kopyala, Sil, ↑, ↓.</p>
+<p><b>Rung başlığı ve açıklaması:</b> Her rung'un üstündeki &quot;başlık…&quot; ve &quot;açıklama…&quot; alanlarına yazılır; aramada da kullanılır.</p>
+<hr>
+<h2 id="4-adresler">4. Adresler</h2>
+<div class="tw"><table><thead><tr><th>Adres</th><th>Anlamı</th><th>Aralık</th><th>Not</th></tr></thead><tbody><tr><td><code>I4</code></td><td>Dijital giriş (GPIO numarası)</td><td>Pin I/O olmalı</td><td>Pinler'de DI / DI pull-up / DI pull-down</td></tr><tr><td><code>Q1</code></td><td>Dijital çıkış</td><td></td><td>Pinler'de DO</td></tr><tr><td><code>AI6</code></td><td>Analog giriş, mV</td><td>0–3000</td><td>Pinler'de Analog giriş (ADC pinleri)</td></tr><tr><td><code>PW7</code></td><td>PWM çıkışı, ‰</td><td>0–1000</td><td>Pinler'de PWM; en çok 8 pin</td></tr><tr><td><code>M0</code></td><td>Yardımcı bit (iç röle)</td><td>M0–M255</td><td></td></tr><tr><td><code>T0</code></td><td>Zamanlayıcı (çıkış biti / geçen süre ms)</td><td>T0–T31</td><td></td></tr><tr><td><code>C0</code></td><td>Sayıcı (çıkış biti / değer)</td><td>C0–C31</td><td></td></tr><tr><td><code>D0</code></td><td>Tam sayı değişken (32 bit)</td><td>D0–D63</td><td></td></tr><tr><td><code>F0</code></td><td>Ondalıklı değişken</td><td>F0–F63</td><td><code>1.5</code> gibi ondalıklı sabit de yazılabilir</td></tr><tr><td><code>HC0</code> / <code>HF0</code></td><td>Hızlı sayıcı değeri / frekansı (Hz)</td><td>HC0–HC3</td><td>Pinler → Hızlı sayıcı</td></tr><tr><td><code>RT0</code>…<code>RT8</code></td><td>Saat: yıl, ay, gün, saat, dakika, saniye, haftanın günü (1 Pzt–7 Paz), günün dakikası, saat ayarlı</td><td>yalnız okunur</td><td></td></tr><tr><td><code>S0</code>…<code>S8</code></td><td>Sistem bitleri</td><td></td><td>aşağıdaki tablo</td></tr><tr><td><code>100</code>, <code>-5</code>, <code>2.5</code></td><td>Sabit sayı</td><td></td><td></td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>Sistem biti</th><th>Anlamı</th></tr></thead><tbody><tr><td>S0</td><td>İlk scan (RUN'a geçişte bir scan 1)</td></tr><tr><td>S1</td><td>1 Hz saat darbesi</td></tr><tr><td>S2</td><td>Hep 1</td></tr><tr><td>S3</td><td>Hep 0</td></tr><tr><td>S4</td><td>10 Hz</td></tr><tr><td>S5</td><td>2 Hz</td></tr><tr><td>S6</td><td>0,5 Hz</td></tr><tr><td>S7</td><td>1 dakika periyot</td></tr><tr><td>S8</td><td>Kart saati ayarlı</td></tr></tbody></table></div>
+<p>Adres yerine <b>Semboller</b> sekmesinde tanımlı ad da yazılabilir.</p>
+<p><b>Program nasıl çalışır:</b> Kart her 10 ms'de bir <i>scan</i> yapar: girişleri okur → rung'ları yukarıdan aşağı, her rung'u soldan sağa çalıştırır → çıkışları yazar. RUN'a geçişte M, T, C, D, F sıfırlanır (kalıcı seçilenler hariç, bkz. <a href="#10-pinler-sekmesi">Bölüm 10</a>).</p>
+<hr>
+<h2 id="5-ladder-sembolleri">5. Ladder sembolleri</h2>
+<p>Her sembolün paletteki adı, klavye kısayolu (varsa) ve örneği aşağıdadır. Kontaklar rung'un solunda, bobinler ve kutular sağında durur. Kutular (zamanlayıcı, matematik vb.) hattı geçirir; yani bir satırda arka arkaya birden fazla kutu kullanılabilir.</p>
+<h3 id="51-kontaklar">5.1 Kontaklar</h3>
+<figure><a href="kilavuz/mnblad-kontak.png" target="_blank"><img src="kilavuz/mnblad-kontak.png" alt="" loading="lazy"></a></figure>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Kısayol</th><th>Açıklama</th></tr></thead><tbody><tr><td><code>─┤ ├─</code> Normalde açık</td><td><b>A</b></td><td>Adres 1 iken iletir. Örnek: I4 = 1 → Q1 yanar</td></tr><tr><td><code>─┤/├─</code> Normalde kapalı</td><td><b>K</b></td><td>Adres 0 iken iletir. Örnek: I5 = 0 → Q2 yanar</td></tr><tr><td><code>─┤P├─</code> Yükselen kenar</td><td><b>P</b></td><td>Adres 0→1 olduğu scan'de bir kez iletir. Örnek: her basışta C0 bir artar</td></tr><tr><td><code>─┤N├─</code> Düşen kenar</td><td><b>N</b></td><td>Adres 1→0 olduğu scan'de bir kez iletir. Örnek: her bırakışta C1 bir artar</td></tr><tr><td><code>[ &gt; ]</code> Karşılaştırma</td><td><b>C</b></td><td>İki değeri karşılaştırır: <code>&gt;</code>, <code>&lt;</code>, <code>≥</code>, <code>≤</code>, <code>=</code>, <code>≠</code>. Örnek: AI6 &gt; 1500 mV iken M0 = 1. Ondalıklı (F) değerlerle de çalışır</td></tr></tbody></table></div>
+<h3 id="52-bağlantılar">5.2 Bağlantılar</h3>
+<figure><a href="kilavuz/mnblad-baglanti.png" target="_blank"><img src="kilavuz/mnblad-baglanti.png" alt="" loading="lazy"></a></figure>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Kısayol</th><th>Açıklama</th></tr></thead><tbody><tr><td><code>────</code> Yatay çizgi</td><td><b>H</b> veya <b>-</b></td><td>Elemanları birbirine bağlar. Bobin yerleştirince aradaki boşluk kendiliğinden dolar</td></tr><tr><td><code>│</code> Dikey bağlantı</td><td><b>V</b> veya <b>|</b></td><td>Seçili hücrenin sağından alt satıra bağlantı (açar/kapatır). Paralel dal = <b>VEYA</b></td></tr></tbody></table></div>
+<ul><li><b>Seri</b> (aynı satırda arka arkaya) kontaklar <b>VE</b> işlemidir.</li><li><b>Paralel</b> dal için rung'a <b>+ satır</b> ile satır ekleyin, alt satıra kontağı koyun ve dikey bağlantıyla birleştirin.</li><li><b>Mühürleme</b> (start/stop): start butonuna paralel, çıkışın kendi kontağı konur; stop butonu kapalı kontakla seri bağlanır (örnekteki Rung 3).</li></ul>
+<h3 id="53-bobinler">5.3 Bobinler</h3>
+<figure><a href="kilavuz/mnblad-bobin.png" target="_blank"><img src="kilavuz/mnblad-bobin.png" alt="" loading="lazy"></a></figure>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Kısayol</th><th>Açıklama</th></tr></thead><tbody><tr><td><code>─( )</code> Bobin</td><td><b>B</b></td><td>Hat enerjiliyse 1, değilse 0</td></tr><tr><td><code>─(/)</code> Ters bobin</td><td><b>T</b></td><td>Hat enerjiliyse 0, değilse 1</td></tr><tr><td><code>─(S)</code> Set</td><td><b>S</b></td><td>Hat enerjilenince 1 yapar ve tutar</td></tr><tr><td><code>─(R)</code> Reset</td><td><b>R</b></td><td>Hat enerjilenince 0 yapar. T adresinde zamanlayıcıyı, C adresinde sayıcıyı, HC adresinde hızlı sayıcıyı sıfırlar</td></tr></tbody></table></div>
+<p>Aynı Q/M adresini iki ayrı bobinde kullanmak (çift bobin) derlemede uyarı verir: son yazan geçerli olur.</p>
+<h3 id="54-zamanlayıcılar">5.4 Zamanlayıcılar</h3>
+<figure><a href="kilavuz/mnblad-zaman.png" target="_blank"><img src="kilavuz/mnblad-zaman.png" alt="" loading="lazy"></a></figure>
+<p>Kutu: zamanlayıcı numarası (T0–T31) ve süre (ms, sabit veya D). Kutunun altında <code>geçen / süre</code> görünür. Zamanlayıcının çıkışı, aynı numaralı <b>T kontağı</b> ile kullanılır (Rung 2).</p>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Açıklama</th><th>Zaman çizelgesi</th></tr></thead><tbody><tr><td><b>TON</b> Çekmede gecikme</td><td>Giriş süre boyunca kesintisiz 1 kalırsa çıkış 1. Giriş 0 olunca hemen 0</td><td>giriş ‾‾‾‾‾‾_ → çıkış __‾‾‾‾_</td></tr><tr><td><b>TOF</b> Düşmede gecikme</td><td>Giriş 1 iken çıkış 1; giriş 0 olunca süre kadar daha 1 kalır</td><td>giriş ‾‾_____ → çıkış ‾‾‾‾‾__</td></tr><tr><td><b>TP</b> Darbe</td><td>Girişin yükselen kenarında çıkış tam süre kadar 1 olur; bu sırada giriş değişse de etkilenmez</td><td></td></tr><tr><td><b>TONR</b> Birikimli</td><td>Giriş 1 iken süre birikir, 0 olunca <b>korunur</b>; toplam süre dolunca çıkış 1 kalır. Sıfırlamak için Reset bobini (T adresi). Çalışma saati sayacı için</td><td></td></tr></tbody></table></div>
+<h3 id="55-sayıcılar">5.5 Sayıcılar</h3>
+<figure><a href="kilavuz/mnblad-sayici.png" target="_blank"><img src="kilavuz/mnblad-sayici.png" alt="" loading="lazy"></a></figure>
+<p>Kutu: sayıcı numarası (C0–C31) ve hedef (PV, sabit veya D). Kutunun altında <code>değer / hedef</code> görünür.</p>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Açıklama</th></tr></thead><tbody><tr><td><b>CTU</b> İleri sayıcı</td><td>Girişin her yükselen kenarında +1. Değer ≥ hedef iken çıkış 1</td></tr><tr><td><b>CTD</b> Geri sayıcı</td><td>Hedeften başlar, her darbede −1, 0'da durur. 0'da çıkış 1. Reset hedefe döndürür</td></tr><tr><td><b>CTUD</b> İleri-geri</td><td>Rung girişi +1, &quot;geri sayma girişi&quot; bitinin yükselen kenarı −1 (0'ın altına inebilir). Değer ≥ hedef iken çıkış 1. Reset 0 yapar</td></tr></tbody></table></div>
+<p>Sayıcıyı sıfırlamak için Reset bobinine C adresi yazılır (Rung 4). Giriş filtresi (Pinler → Kart ayarları) kontak sıçramasının birden fazla sayılmasını önler.</p>
+<h3 id="56-matematik">5.6 Matematik</h3>
+<figure><a href="kilavuz/mnblad-mat.png" target="_blank"><img src="kilavuz/mnblad-mat.png" alt="" loading="lazy"></a></figure>
+<p>Hat enerjiliyse işlem her scan'de yapılır; sonuç hedefe yazılır. Hedef D, F, PW veya HC olabilir.</p>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>İşlem</th></tr></thead><tbody><tr><td><b>MOV</b></td><td>Kaynak → hedef (kopyala)</td></tr><tr><td><b>ADD / SUB</b></td><td>A + B, A − B</td></tr><tr><td><b>MUL / DIV</b></td><td>A × B, A ÷ B (tam sayıda bölüm kesirsiz; 0'a bölme yapılmaz)</td></tr><tr><td><b>MOD</b></td><td>Bölümden kalan</td></tr><tr><td><b>MIN / MAX</b></td><td>Küçük / büyük olan</td></tr><tr><td><b>ABS</b></td><td>Mutlak değer</td></tr></tbody></table></div>
+<p><b>Ondalıklı hesap:</b> İşlenenlerden biri F veya <code>1.5</code> gibi ondalıklı sabitse kutu ondalıklı hesaplar (Rung 6: D1 × 1.5 → F0 = 187.5). Hedef D ise sonuç yuvarlanır (4.5 → 5, −4.5 → −5).</p>
+<h3 id="57-kelime-mantığı">5.7 Kelime mantığı</h3>
+<figure><a href="kilavuz/mnblad-mantik.png" target="_blank"><img src="kilavuz/mnblad-mantik.png" alt="" loading="lazy"></a></figure>
+<p>Değerlerin bitleri üzerinde işlem yapar.</p>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>İşlem</th><th>Örnek (D10 = 12 = 1100₂, D11 = 10 = 1010₂)</th></tr></thead><tbody><tr><td><b>AND</b></td><td>Bit bit VE</td><td>12 AND 10 = 8</td></tr><tr><td><b>OR</b></td><td>Bit bit VEYA</td><td>12 OR 10 = 14</td></tr><tr><td><b>XOR</b></td><td>Bit bit özel VEYA</td><td>12 XOR 10 = 6</td></tr><tr><td><b>NOT</b></td><td>Bitlerin tersi</td><td>NOT 12 = −13</td></tr><tr><td><b>SHL</b></td><td>Sola kaydır (×2ⁿ)</td><td>12 sola 2 = 48</td></tr><tr><td><b>SHR</b></td><td>Sağa kaydır (işaretsiz)</td><td>12 sağa 2 = 3</td></tr></tbody></table></div>
+<p><b>Bit testi:</b> Bir değerin belli bir bitine bakmak için AND ile maskeleyip karşılaştırma kullanın (Rung 5–6).</p>
+<h3 id="58-analog-ölçekleme-sınırlama-pid">5.8 Analog: ölçekleme, sınırlama, PID</h3>
+<figure><a href="kilavuz/mnblad-analog.png" target="_blank"><img src="kilavuz/mnblad-analog.png" alt="" loading="lazy"></a></figure>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Açıklama</th></tr></thead><tbody><tr><td><b>SCALE</b> Ölçekle</td><td>Giriş aralığını çıkış aralığına doğrusal çevirir; sonuç çıkış aralığına sınırlanır. Örnek: AI6 0–3000 mV → 0–100.0 °C (F1)</td></tr><tr><td><b>LIMIT</b> Sınırla</td><td>Değeri min–maks arasında tutar</td></tr><tr><td><b>PID</b> kontrol</td><td>Ölçülen değeri (PV) hedefe (SP) götürür. Çıkış 0–1000 ‰: doğrudan PWM pinine (PW) bağlanabilir</td></tr></tbody></table></div>
+<p><b>PID alanları:</b> PV, SP, çıkış (PW/D/F), <b>Kp</b> kazanç (negatif = ters etki, ör. soğutma), <b>Ti</b> integral süresi (s; 0 = integral yok), <b>Td</b> türev süresi (s; 0 = yok).</p>
+<ul><li>Hat enerjisizken PID durur, integral sıfırlanır, çıkış son değerinde kalır.</li><li>Çıkış sınırdayken integral birikmez (hedefi aşmayı azaltır).</li><li>Ayar başlangıcı: önce Ti = 0, Td = 0 ile Kp'yi salınım başlamadan biraz önceye kadar artırın; sonra Ti ile kalıcı hatayı giderin. Tepkiyi <b>Trend</b> sekmesinde izleyin.</li></ul>
+<p><b>PWM çıkışı:</b> Pinler'de pin modu &quot;PWM çıkışı&quot; yapılır; ladder'da <code>PW7</code> gibi adrese 0–1000 değer yazılır (250 = %25). Frekans tüm PWM pinleri için ortaktır (Pinler → Kart ayarları).</p>
+<h3 id="59-program-akışı-atlama-ve-alt-program">5.9 Program akışı: atlama ve alt program</h3>
+<p>Ana program ve her alt program ayrı <b>sayfa sekmesinde</b> durur. <b>＋ Alt program</b> yeni bir alt program sayfası (SBR) açar; sayfanın ilk rung'unun başlığı sayfa adı olur. Açık sekmedeki <b>✕</b> alt programı siler.</p>
+<figure><a href="kilavuz/mnblad-akis.png" target="_blank"><img src="kilavuz/mnblad-akis.png" alt="" loading="lazy"></a></figure>
+<figure><a href="kilavuz/mnblad-akis2.png" target="_blank"><img src="kilavuz/mnblad-akis2.png" alt="" loading="lazy"></a></figure>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Açıklama</th></tr></thead><tbody><tr><td><b>JMP n</b> Atla</td><td>Hat enerjiliyse aradaki rung'lar atlanır, <b>LBL n</b> etiketli rung'dan devam edilir. Yalnız ileriye ve aynı sayfa içinde</td></tr><tr><td><b>LBL n</b> Etiket</td><td>Rung başlığındaki &quot;Rung türü&quot; seçimiyle verilir</td></tr><tr><td><b>CALL n</b> Alt program çağır</td><td>Hat enerjiliyse <b>SBR n</b> alt programı çalışır, bitince kaldığı yerden devam edilir. En çok 8 iç içe</td></tr><tr><td><b>RET</b> Dön</td><td>Hat enerjiliyse alt programın kalanı atlanır, çağrıldığı yere dönülür. Ana programda scan'i orada bitirir</td></tr></tbody></table></div>
+<p>Çağrılmayan alt program çalışmaz; içindeki zamanlayıcılar da ilerlemez. Hiç çağrılmayan alt programın sekmesinde ⚠ görünür.</p>
+<h3 id="510-zaman">5.10 Zaman</h3>
+<figure><a href="kilavuz/mnblad-saat.png" target="_blank"><img src="kilavuz/mnblad-saat.png" alt="" loading="lazy"></a></figure>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Açıklama</th></tr></thead><tbody><tr><td><b>⏰ Zaman aralığı</b> (TW)</td><td>Seçilen günlerde açılış saatinden kapanış saatine kadar iletir. Kapanış açılıştan önceyse gece yarısını aşar (22:00–06:00). Saatler SS:DD veya D olarak girilir</td></tr><tr><td><code>RT0–RT8</code></td><td>Saat değerleri; karşılaştırma ve MOV ile kullanılır (Rung 3)</td></tr></tbody></table></div>
+<p>Kart saati USB ile bağlanınca PC'den alınır. Enerji kesilince kaybolur; saat ayarlı değilken S8 = 0 olur ve zaman aralığı kontakları iletmez.</p>
+<h3 id="511-haberleşme-ve-hızlı-sayıcı">5.11 Haberleşme ve hızlı sayıcı</h3>
+<figure><a href="kilavuz/mnblad-haber.png" target="_blank"><img src="kilavuz/mnblad-haber.png" alt="" loading="lazy"></a></figure>
+<div class="tw"><table><thead><tr><th>Sembol</th><th>Açıklama</th></tr></thead><tbody><tr><td><b>MBR</b> Modbus oku</td><td>Master modunda slave cihazdan okur: FC01/02 (bit → M), FC03/04 (register → D veya F). Hat enerjili oldukça sürekli tekrarlanır</td></tr><tr><td><b>MBW</b> Modbus yaz</td><td>D/M/F değerini slave'e yazar: FC05/06/15/16. Tek sefer için önüne yükselen kenar (P) koyun</td></tr><tr><td><code>HC0</code> / <code>HF0</code></td><td>Hızlı sayıcı değeri ve frekansı; MOV, karşılaştırma ve Reset ile kullanılır</td></tr></tbody></table></div>
+<p><b>MBR/MBW alanları:</b> slave adresi (1–247; MBW'de 0 = yayın), fonksiyon, uzak adres, adet, yerel adres, durum D'si, kelime sırası (yalnız F için: ABCD veya CDAB). İşlem başarıyla bittiği scan'de kutunun çıkışı 1 olur.</p>
+<div class="tw"><table><thead><tr><th>Durum D'si</th><th>Anlamı</th></tr></thead><tbody><tr><td>0</td><td>Tamam</td></tr><tr><td>1–11</td><td>Slave'in döndürdüğü hata kodu (1 fonksiyon, 2 adres, 3 değer …)</td></tr><tr><td>−1</td><td>Zaman aşımı (slave yanıt vermedi)</td></tr><tr><td>−2</td><td>Bozuk yanıt / CRC hatası</td></tr><tr><td>−3</td><td>Master kapalı (Pinler'de RS485 Master değil)</td></tr><tr><td>−4</td><td>Geçersiz istek</td></tr></tbody></table></div>
+<hr>
+<h2 id="6-semboller-sekmesi">6. Semboller sekmesi</h2>
+<p>Adreslere anlamlı ad verilir (ör. I4 = Start). Ad, ladder'da adresin yerine görünür ve adres yazılan her yere yazılabilir. <b>Programdaki adresleri ekle</b> programdaki tüm adresleri listeye alır. Ad için harf, rakam ve <code>_</code> kullanın; rakamla başlamasın.</p>
+<figure><a href="kilavuz/mnblad-semboller.png" target="_blank"><img src="kilavuz/mnblad-semboller.png" alt="" loading="lazy"></a></figure>
+<hr>
+<h2 id="7-bul-çapraz-referans">7. Bul / çapraz referans</h2>
+<p><b>Ctrl+F</b> veya paletteki <b>Bul / çapraz referans</b>:</p>
+<ul><li>Boş arama: programdaki tüm adresler, okunma/yazılma sayıları ve geçtiği rung'lar. Q/M'de birden fazla yazma turuncu görünür (çift bobin olabilir).</li><li>Adres, sembol adı veya rung başlığıyla arama; satıra tıklayınca ilgili hücreye gidilir (gerekirse sayfa sekmesi değişir).</li><li><b>Tümünü değiştir</b>: bir adresi programın her yerinde başka adresle değiştirir (Ctrl+Z ile geri alınır).</li></ul>
+<figure><a href="kilavuz/mnblad-xref.png" target="_blank"><img src="kilavuz/mnblad-xref.png" alt="" loading="lazy"></a></figure>
+<hr>
+<h2 id="8-izleme-tablosu-ve-trend">8. İzleme tablosu ve trend</h2>
+<p><b>İzleme tablosu</b> (Ladder sağ sütun): programdaki adresler kendiliğinden listelenir; başka adres eklemek için üstteki kutuya yazıp <b>Ekle</b>.</p>
+<ul><li>D, M, F ve HC değerleri yazılabilir (RUN'da da).</li><li>I, Q ve AI <b>zorlanabilir</b> (force): <b>F0/F1</b> biti 0/1'e, AI için mV değeri girip <b>F</b>; <b>✕F</b> zorlamayı kaldırır. Zorlama varken kartın LED'i mor yanıp söner ve rung'da &quot;F&quot; işareti görünür.</li><li><b>T+ / T−</b>: adresi trend grafiğine ekler / çıkarır.</li></ul>
+<p><b>Trend</b> sekmesi: en çok 4 adresin zaman grafiği. Sayılar üstte ortak eksende, bitler altta ayrı şeritlerde. Pencere süresi seçilebilir, <b>Duraklat</b>, <b>Temizle</b>, <b>CSV indir</b>.</p>
+<figure><a href="kilavuz/mnblad-trend.png" target="_blank"><img src="kilavuz/mnblad-trend.png" alt="" loading="lazy"></a></figure>
+<hr>
+<h2 id="9-simülasyon">9. Simülasyon</h2>
+<p>Kart olmadan programı denemek için <b>Bağlan → ▶ Simülasyon</b>. Üst çubukta mor <b>SİMÜLASYON</b> etiketi görünür. Yükleme, RUN/STOP, canlı izleme, izleme tablosu, trend ve zorlama kartla aynı çalışır.</p>
+<p><b>Programı deneme:</b></p>
+<ol start="1"><li>Programı yazın, <b>PLC'ye yükle</b>. Simülasyonda programdaki pinler kendiliğinden ayarlanır (I → dijital giriş, Q → dijital çıkış, AI → analog giriş, PW → PWM).</li><li><b>RUN</b>.</li><li>Ladder sekmesinin sağında <b>Sanal giriş / çıkış</b> kartı açılır. Programdaki her giriş ve çıkış burada listelenir:<ul><li>Dijital giriş: <b>anahtar</b> (0/1 kalır) veya <b>Bas</b> (basılı tuttukça 1, buton gibi).</li><li>Analog giriş: <b>kaydırıcı</b> (0–3000 mV).</li><li>Dijital çıkış: lamba; PWM çıkışı: yüzde.</li></ul></li><li>RUN'dayken rung'daki bir <b>I kontağına tıklamak</b> da o girişi açıp kapatır.</li></ol>
+<figure><a href="kilavuz/mnblad-simio.png" target="_blank"><img src="kilavuz/mnblad-simio.png" alt="" loading="lazy"></a></figure>
+<p>Girişler ayrıca <b>Pinler</b> sekmesinden (dijital girişte <b>1 yap / 0 yap</b>, analog girişte mV kutusu) ve izleme tablosundaki F0/F1 ile de verilebilir.</p>
+<figure><a href="kilavuz/mnblad-sim_pin.png" target="_blank"><img src="kilavuz/mnblad-sim_pin.png" alt="" loading="lazy"></a></figure>
+<p>Simülasyonda olmayanlar: Modbus (MB kutusu durum −3 yazar), kalıcı hafıza, giriş filtresi, hızlı sayıcı (HC 0 okunur), firmware yükleme. Simülasyonu durdurmak için Bağlantı → <b>Durdur</b>.</p>
+<hr>
+<h2 id="10-pinler-sekmesi">10. Pinler sekmesi</h2>
+<figure><a href="kilavuz/mnblad-pinler.png" target="_blank"><img src="kilavuz/mnblad-pinler.png" alt="" loading="lazy"></a></figure>
+<p><b>Kart ayarları</b></p>
+<ul><li><i>İzleme periyodu</i>: canlı izleme güncelleme sıklığı (100 ms önerilir).</li><li><i>Durum LED pini</i>: kartın RGB LED'i (GPIO48).</li><li><i>Giriş filtresi</i>: dijital giriş bu süre sabit kalmadan değişiklik kabul edilmez (kontak sıçraması).</li><li><i>PWM frekansı</i>: tüm PWM pinleri için.</li><li><i>Kart saati</i>: PC saatini gönder.</li><li><i>Tüm pinleri kapat</i>.</li></ul>
+<p><b>Pinler tablosu</b>: her GPIO için mod (Kapalı, Dijital giriş, pull-up, pull-down, Dijital çıkış, Analog giriş, PWM çıkışı), adres, anlık değer. STOP'ta çıkışlar <b>Aç/Kapat</b> ile, PWM değer kutusuyla elle sürülebilir. Pin ayarları yalnız STOP'ta değişir.</p>
+<figure><a href="kilavuz/mnblad-kartlar.png" target="_blank"><img src="kilavuz/mnblad-kartlar.png" alt="" loading="lazy"></a></figure>
+<p><b>Kalıcı hafıza</b>: M, D, T, C, F için bir başlangıç numarası verilir; o numaradan alanın sonuna kadar olan adresler enerji kesilince korunur ve RUN'a geçişte sıfırlanmaz (örnek: F40 → F40–F63, ayar katsayıları için). Değerler resette kayıpsız; enerji kesintisinde değiştikçe en çok dakikada bir ve STOP'ta kaydedilir, bu yüzden kesintiden hemen önceki son değişiklik kaybolabilir. <b>Değerleri sıfırla</b> kalıcı adresleri 0 yapar.</p>
+<p><b>Hızlı sayıcı / enkoder</b> (HC0–HC3): sayım donanımda yapılır, 10 ms'lik scan'den hızlı darbeler kaçmaz.</p>
+<ul><li>Modlar: <i>İleri sayıcı</i> (A pini), <i>Darbe + yön</i> (A sayar, B = 1 ileri / 0 geri), <i>Enkoder A/B ×4</i> (yönü kendisi algılar).</li><li><i>Filtre</i>: kısa parazit darbelerini yok sayar (1 µs / 10 µs).</li><li>Seçilen pinler I/O listesinden çıkar. <b>Sıfırla</b> sayımı 0 yapar.</li></ul>
+<figure><a href="kilavuz/mnblad-rs485.png" target="_blank"><img src="kilavuz/mnblad-rs485.png" alt="" loading="lazy"></a></figure>
+<p><b>RS485 · Modbus RTU</b></p>
+<ul><li><i>Mod</i>: Kapalı / <b>Slave</b> (HMI veya SCADA kartı okur-yazar) / <b>Master</b> (kart, MBR/MBW kutularıyla başka cihazları okur-yazar).</li><li>Adres (slave), hız, parite, TX/RX pinleri; DE pini otomatik yönlü modülde &quot;Yok&quot;.</li><li>Sayaçlar: doğru çerçeve, CRC/bozuk, hata yanıtı, zaman aşımı, çerçeve/sn.</li><li>GPIO43/44 seçilirse COM portundaki hata ayıklama çıktısı kapanır.</li></ul>
+<p><b>Modbus slave adres haritası</b> (0 tabanlı):</p>
+<div class="tw"><table><thead><tr><th>Tür</th><th>Adres</th><th>PLC değeri</th><th>Erişim</th></tr></thead><tbody><tr><td>Coil (FC01/05/15)</td><td>0–48</td><td>Q (GPIO no)</td><td>okunur</td></tr><tr><td>Coil</td><td>100–355</td><td>M0–M255</td><td>okunur/yazılır</td></tr><tr><td>Giriş (FC02)</td><td>0–48 · 100–131 · 200–231</td><td>I · T0–T31 çıkışı · C0–C31 çıkışı</td><td>okunur</td></tr><tr><td>Input reg. (FC04)</td><td>0–48 · 100–131 · 200–231 · 300–308 · 400–407 · 410–417</td><td>AI mV · T geçen ms · C değeri · RT saat · HC (32 bit) · HF (32 bit)</td><td>okunur</td></tr><tr><td>Holding reg. (FC03/06/16)</td><td>0–127</td><td>D0–D63, 32 bit (2n üst, 2n+1 alt kelime)</td><td>okunur/yazılır</td></tr><tr><td>Holding reg.</td><td>1000–1063</td><td>D0–D63, 16 bit işaretli</td><td>okunur/yazılır</td></tr><tr><td>Holding reg.</td><td>2000–2048</td><td>PW (GPIO no), 0–1000</td><td>okunur/yazılır</td></tr><tr><td>Holding reg.</td><td>3000–3127</td><td>F0–F63, float ABCD (Fn = 3000+2n üst kelime)</td><td>okunur/yazılır (FC16)</td></tr><tr><td>Holding reg.</td><td>4000–4127</td><td>F0–F63, float CDAB</td><td>okunur/yazılır (FC16)</td></tr></tbody></table></div>
+<hr>
+<h2 id="11-kayıt-sekmesi-ve-tanılama">11. Kayıt sekmesi ve tanılama</h2>
+<figure><a href="kilavuz/mnblad-tanilama.png" target="_blank"><img src="kilavuz/mnblad-tanilama.png" alt="" loading="lazy"></a></figure>
+<ul><li><b>Scan süresi</b>: son, en kısa, ortalama, en uzun; 10 ms'yi aşan scan sayısı; en uzun scan aralığı. Kırmızı değerler programın kartı zorladığını gösterir.</li><li><b>Son açılış nedeni</b> (enerji, reset, USB, watchdog, düşük gerilim …), toplam açılış sayısı, boş bellek, çalışma süresi.</li><li><b>Olay kaydı</b>: son 32 olay kartta kalıcı tutulur (açılış, RUN/STOP ve kim yaptı, program yükleme, scan aşımı, ayar değişiklikleri, saat düzeltmesi, firmware güncellemesi). Sorunlu olaylar kırmızı.</li><li>Program döngüsü 5 saniye takılırsa kart kendini resetler (watchdog) ve nedeni kaydeder.</li></ul>
+<p>Altta <b>Panel kaydı</b>: panelin bu oturumdaki ayrıntılı kaydı.</p>
+<hr>
+<h2 id="12-ayarlar-sekmesi">12. Ayarlar sekmesi</h2>
+<figure><a href="kilavuz/mnblad-ayarlar.png" target="_blank"><img src="kilavuz/mnblad-ayarlar.png" alt="" loading="lazy"></a></figure>
+<ul><li><b>Görünüm</b>: tema (otomatik / açık / koyu) ve ana renk.</li><li><b>Yazı boyutu</b>: panelin her bölümü için ayrı.</li><li><b>Program bilgisi</b>: program adı, sürüm, açıklama (yüklemede karta yazılır).</li><li><b>Firmware güncelleme</b>: kartın yazılımı panelden güncellenir. <i>Paketteki firmware'i yükle</i> veya <i>Dosyadan seç…</i>. Program, semboller ve pin ayarları kartta korunur. Yükleme bitene kadar USB kablosunu çıkarmayın; bitince kart kendiliğinden yeniden başlar. Kart cevap vermezse <i>Portu elle seç ve devam et</i>; gerekirse kartı BOOT tuşu basılıyken RST ile indirme moduna alın.</li></ul>
+<hr>
+<h2 id="13-run-stop-boot-tuşu-ve-led">13. RUN / STOP, BOOT tuşu ve LED</h2>
+<ul><li>RUN/STOP <b>kalıcıdır</b>: enerji kesilip gelince veya resetten sonra kart son moduyla açılır.</li><li>Program değişikliği, pin ayarı, RS485 / hızlı sayıcı / kalıcı hafıza ayarı yalnız <b>STOP</b>'ta yapılır. PLC RUN'dayken programı değiştirmek için <b>Düzenle</b> (onay alıp STOP'a alır).</li><li>STOP'ta tüm çıkışlar 0 (LOW), PWM 0 olur.</li><li>Karttaki <b>BOOT tuşu</b> 5 saniye basılı tutulursa RUN ↔ STOP geçer. LED yeni modun renginde 3 kez yanıp söner.</li></ul>
+<div class="tw"><table><thead><tr><th>LED</th><th>Anlamı</th></tr></thead><tbody><tr><td>Yeşil</td><td>RUN</td></tr><tr><td>Sarı</td><td>STOP</td></tr><tr><td>Kırmızı</td><td>Hata (kayıtlı program geçersiz)</td></tr><tr><td>Mavi kısa yanıp sönme</td><td>Panelden komut geldi</td></tr><tr><td>Mor yanıp sönme</td><td>Zorlama (force) var</td></tr></tbody></table></div>
+<hr>
+<h2 id="14-klavye-kısayolları-ladder-sekmesi">14. Klavye kısayolları (Ladder sekmesi)</h2>
+<div class="tw"><table><thead><tr><th>Tuş</th><th>İşlev</th></tr></thead><tbody><tr><td><b>A</b> / <b>K</b></td><td>Normalde açık / kapalı kontak</td></tr><tr><td><b>P</b> / <b>N</b></td><td>Yükselen / düşen kenar</td></tr><tr><td><b>C</b></td><td>Karşılaştırma</td></tr><tr><td><b>B</b> / <b>T</b></td><td>Bobin / ters bobin</td></tr><tr><td><b>S</b> / <b>R</b></td><td>Set / Reset</td></tr><tr><td><b>H</b> veya <b>-</b></td><td>Yatay çizgi</td></tr><tr><td><b>V</b> veya <b>|</b></td><td>Dikey bağlantı</td></tr><tr><td><b>Enter</b></td><td>Seçili elemanın adresini düzenle</td></tr><tr><td><b>Delete</b> / <b>Backspace</b></td><td>Seçili hücreyi sil / soldaki hücreyi silerek geri git</td></tr><tr><td>Oklar</td><td>Hücreler arasında gez</td></tr><tr><td><b>Ctrl+Z</b> / <b>Ctrl+Y</b></td><td>Geri al / yinele</td></tr><tr><td><b>Ctrl+C</b> / <b>Ctrl+X</b> / <b>Ctrl+V</b></td><td>Hücre kopyala / kes / yapıştır (<b>Ctrl+Shift+C</b> rung kopyala)</td></tr><tr><td><b>Ctrl+F</b></td><td>Bul / çapraz referans</td></tr></tbody></table></div>
+<hr>
+<h2 id="15-sorun-giderme">15. Sorun giderme</h2>
+<div class="tw"><table><thead><tr><th>Belirti</th><th>Çözüm</th></tr></thead><tbody><tr><td>&quot;Bağlan&quot; listesinde kart yok</td><td><b>＋ Yeni port seç…</b> ile kartı seçin; kartın <b>USB</b> portunun kullanıldığından ve kablonun veri kablosu olduğundan emin olun</td></tr><tr><td>Bağlanırken port meşgul hatası</td><td>Kartı kullanan başka program/sekme açık olabilir; kapatın</td></tr><tr><td>&quot;Program yüklemek için önce STOP&quot;</td><td>STOP'a alın veya <b>Düzenle</b></td></tr><tr><td>&quot;Editördeki program kartla farklı&quot;</td><td>Derle → PLC'ye yükle; ya da kartınkini almak için Program → Karttan al</td></tr><tr><td>Derleme hatası &quot;soluna bağlantı yok&quot;</td><td>Elemanın solundaki hücreler boş; yatay çizgi (H) ile bağlayın</td></tr><tr><td>Uyarı &quot;dijital giriş değil&quot;</td><td>Pinler'de pinin modunu adresle uyumlu yapın (I için DI, Q için DO, AI için Analog, PW için PWM)</td></tr><tr><td>Sayıcı bir basışta 2–3 sayıyor</td><td>Pinler → Giriş filtresi'ni artırın (ör. 20 ms)</td></tr><tr><td>Zaman aralığı (TW) hiç iletmiyor</td><td>Kart saati ayarlı değil (enerji kesilmiş): panelle bağlanın veya Pinler → PC saatini gönder</td></tr><tr><td>Modbus durum −1</td><td>Slave yanıt vermiyor: kablo (A/B), slave adresi, hız ve parite aynı mı?</td></tr><tr><td>Kart kırmızı yanıyor</td><td>Kayıtlı program geçersiz (ör. pin ayarı değişti); programı yeniden yükleyin</td></tr><tr><td>Firmware yükleme &quot;Failed to connect&quot;</td><td>Panelden bağlantıyı kesip tekrar deneyin; olmazsa BOOT basılıyken RST'ye basıp <i>Portu elle seç ve devam et</i></td></tr></tbody></table></div>
+
+</main>
+</div>
+<script>
+// Panelin tema ve ana rengini kullan
+try {
+  const look = JSON.parse(localStorage.getItem("mnblad.look") || "{}");
+  const C = [["#c2410c","#ea580c"],["#b91c1c","#ef4444"],["#be185d","#ec4899"],["#7e22ce","#a855f7"],["#4338ca","#6366f1"],["#1d4ed8","#3b82f6"],["#0e7490","#06b6d4"],["#15803d","#22c55e"],["#b45309","#f59e0b"],["#334155","#94a3b8"]];
+  if (look.theme && look.theme !== "auto") document.documentElement.setAttribute("data-theme", look.theme);
+  const c = C[look.accent] || C[0];
+  const dark = look.theme === "dark" || (look.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.style.setProperty("--acc", dark ? c[1] : c[0]);
+} catch {}
+// İçindekiler: görünen bölümü işaretle
+const links = [...document.querySelectorAll("#toc a")];
+const heads = links.map(a => document.getElementById(a.getAttribute("href").slice(1))).filter(Boolean);
+addEventListener("scroll", () => {
+  let cur = heads[0];
+  for (const h of heads) if (h.getBoundingClientRect().top < 120) cur = h;
+  links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + cur?.id));
+}, { passive: true });
+// Arama: ilk eşleşen bölüme git ve vurgula
+const q = document.getElementById("q");
+let marks = [];
+q.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter") return;
+  marks.forEach(m => m.replaceWith(document.createTextNode(m.textContent))); marks = [];
+  const t = q.value.trim().toLocaleLowerCase("tr"); if (t.length < 2) return;
+  const w = document.createTreeWalker(document.querySelector("main"), NodeFilter.SHOW_TEXT);
+  const hits = [];
+  while (w.nextNode()) { const n = w.currentNode; const k = n.textContent.toLocaleLowerCase("tr").indexOf(t); if (k >= 0) hits.push([n, k]); }
+  for (const [n, k] of hits.slice(0, 200)) {
+    const r = document.createRange(); r.setStart(n, k); r.setEnd(n, k + t.length);
+    const m = document.createElement("mark"); r.surroundContents(m); marks.push(m);
+  }
+  if (marks[0]) marks[0].scrollIntoView({ block: "center" });
+});
+</script>
+</body>
+</html>
