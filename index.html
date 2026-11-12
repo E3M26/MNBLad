@@ -443,6 +443,93 @@
          white-space: pre-wrap; color: var(--muted); }
   .warn { color: var(--warn); }
   .error { color: var(--err); }
+
+  /* ---- Kart ve tablo görünümü (sekmeler) ---- */
+  .card { padding: 14px 16px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0, 0, 0, .04); }
+  .card > h2 { display: flex; align-items: center; gap: 10px; font-size: 1.07em; margin: -2px 0 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .card > h2::before { content: ""; flex: none; width: 4px; height: 1.15em; border-radius: 2px; background: var(--accent); }
+  .card > h2 .h-r { margin-left: auto; font-weight: 400; }
+  main > .tab:not(#tab-ladder) > .card + .card { margin-top: 14px; }
+  main > .tab:not(#tab-ladder) .table-wrap { border: 1px solid var(--line); border-radius: 10px; }
+  main > .tab:not(#tab-ladder) .table-wrap th { background: color-mix(in srgb, var(--accent) 7%, var(--card)); text-transform: uppercase; letter-spacing: .04em; font-size: 11px; padding: 8px 10px; }
+  main > .tab:not(#tab-ladder) .table-wrap td { padding: 7px 10px; }
+  main > .tab:not(#tab-ladder) .table-wrap tbody tr:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+  main > .tab:not(#tab-ladder) .table-wrap tbody tr:last-child td { border-bottom: 0; }
+  .note { margin: 10px 0 0; padding: 8px 12px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 6%, var(--card)); color: var(--muted); font-size: .86em; border-left: 3px solid var(--accent); }
+  /* Ayar listesi: alt alta satırlar, solda ad + açıklama, sağda seçim */
+  .setlist { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 11px 14px; border-bottom: 1px solid var(--line); background: var(--card); }
+  .set-row:last-child { border-bottom: 0; }
+  .set-row:hover { background: color-mix(in srgb, var(--accent) 4%, var(--card)); }
+  .set-l { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .set-l b { font-weight: 600; }
+  .set-l small { color: var(--muted); font-size: .86em; line-height: 1.4; }
+  .set-row > select, .set-row > button, .set-row > .set-c { flex: none; min-width: 160px; }
+  .set-c { display: flex; justify-content: flex-end; }
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 999px; font-size: .78em; font-weight: 600;
+          background: var(--grid); color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
+  .pill.acc { background: var(--acc-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  @media (max-width: 640px) { .set-row { flex-direction: column; align-items: stretch; } .set-row > select, .set-row > button { min-width: 0; } }
+  /* Pinler tablosu */
+  :root { --k-in: var(--s1); --k-out: var(--s2); --k-ai: var(--s3); --k-pwm: #7c3aed; }
+  .pin-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .pin-tools .seg button { padding: 5px 12px; }
+  .pin-sum { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+  .pin-sum .pill i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  #pins td { vertical-align: middle; }
+  #pins tr td:first-child { box-shadow: inset 4px 0 0 transparent; }
+  #pins tr[data-kind="in"] td:first-child { box-shadow: inset 4px 0 0 var(--k-in); }
+  #pins tr[data-kind="out"] td:first-child { box-shadow: inset 4px 0 0 var(--k-out); }
+  #pins tr[data-kind="ai"] td:first-child { box-shadow: inset 4px 0 0 var(--k-ai); }
+  #pins tr[data-kind="pwm"] td:first-child { box-shadow: inset 4px 0 0 var(--k-pwm); }
+  #pins tr[data-kind="off"] { color: var(--muted); }
+  #pins .gp { font-family: ui-monospace, Consolas, monospace; font-weight: 700; margin-right: 6px; }
+  #pins .pins-pills { display: inline-flex; gap: 4px; flex-wrap: wrap; vertical-align: middle; }
+  .apill { display: inline-block; min-width: 46px; text-align: center; padding: 2px 8px; border-radius: 6px; font: 700 .86em ui-monospace, Consolas, monospace; }
+  .apill.in { color: var(--k-in); background: color-mix(in srgb, var(--k-in) 13%, transparent); }
+  .apill.out { color: var(--k-out); background: color-mix(in srgb, var(--k-out) 13%, transparent); }
+  .apill.ai { color: var(--k-ai); background: color-mix(in srgb, var(--k-ai) 13%, transparent); }
+  .apill.pwm { color: var(--k-pwm); background: color-mix(in srgb, var(--k-pwm) 13%, transparent); }
+  #pins select { min-width: 190px; }
+  .meterx { display: inline-block; width: 90px; height: 8px; border-radius: 4px; background: var(--grid); overflow: hidden; vertical-align: middle; margin-left: 8px; }
+  .meterx i { display: block; height: 100%; border-radius: 4px; background: var(--k-pwm); }
+  .meterx.ai i { background: var(--k-ai); }
+  #pins td:last-child { white-space: nowrap; }
+  #pins .pwin { width: 76px; }
+  /* Kaydırıcı: tarayıcı varsayılanı yerine kendi çizimimiz (dolu kısım tür renginde) */
+  .pwrange { --rc: var(--k-pwm); -webkit-appearance: none; appearance: none; width: 150px; height: 6px; padding: 0; margin: 0 0 0 10px; border: 0;
+             border-radius: 3px; vertical-align: middle; cursor: pointer;
+             background: linear-gradient(to right, var(--rc) var(--p, 0%), var(--grid) var(--p, 0%)); }
+  .pwrange.ai { --rc: var(--k-ai); }
+  .pwrange::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%;
+                                   background: var(--card); border: 3px solid var(--rc); box-shadow: 0 1px 3px rgba(0, 0, 0, .2); }
+  .pwrange::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--card); border: 3px solid var(--rc); }
+  .pwrange:disabled { opacity: .45; cursor: not-allowed; }
+  .pwq { padding: 3px 7px; font-size: .8em; margin-left: 3px; }
+  /* Semboller, Trend, Kayıt, Ayarlar */
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .toolbar .grow { flex: 1 1 200px; }
+  #symFind { min-width: 200px; }
+  #symBody td.uc { text-align: center; }
+  #symBody td.uc span { display: inline-block; min-width: 26px; padding: 1px 8px; border-radius: 999px; background: var(--grid); font-weight: 600; color: var(--muted); }
+  #symBody td.uc span.u { background: var(--acc-soft); color: var(--accent); }
+  .tr-in { border-left-width: 4px !important; }
+  .tr-in[data-i="0"] { border-left-color: var(--s1); } .tr-in[data-i="1"] { border-left-color: var(--s2); }
+  .tr-in[data-i="2"] { border-left-color: var(--s3); } .tr-in[data-i="3"] { border-left-color: var(--s4); }
+  .trend-wrap { border: 1px solid var(--line); border-radius: 10px; padding: 6px; background: var(--card); }
+  #log { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .clock { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+  .clock #rtcNow { font-size: 1.7em; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  /* Ladder: fareyle elemanın üzerine gelince açıklama */
+  .cell-tip { position: fixed; z-index: 60; pointer-events: none; max-width: 360px; background: var(--card); color: var(--text);
+              border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 8px 10px;
+              box-shadow: 0 6px 20px rgba(0, 0, 0, .18); font-size: 12.5px; line-height: 1.4; }
+  .cell-tip .ct-h { font-weight: 700; margin-bottom: 4px; }
+  .cell-tip .ct-r { padding: 4px 0 0; border-top: 1px solid var(--line); margin-top: 4px; }
+  .cell-tip .ct-r b { font-family: ui-monospace, Consolas, monospace; color: var(--accent); margin-right: 6px; }
+  .cell-tip .ct-r .nm { font-weight: 600; }
+  .cell-tip .ct-d { color: var(--muted); }
+  .cell-tip .ct-r.sys .ct-d { color: var(--text); }
 </style>
 </head>
 <body>
@@ -736,11 +823,13 @@
   <section id="tab-sym" class="tab" hidden>
     <div class="card">
       <h2>Sembol tablosu</h2>
-      <div class="row">
-        <button id="btnSymAdd">+ Satır</button>
+      <div class="toolbar">
+        <button id="btnSymAdd" class="primary">+ Satır</button>
         <button id="btnSymFill" title="Programda kullanılan ama adı olmayan adresler için satır ekler">Programdaki adresleri ekle</button>
-        <span class="tag">Ad, ladder'da adresin yerine görünür ve adres yazılan her yere yazılabilir. Harf, rakam ve _ kullanın; rakamla başlamasın.</span>
+        <input id="symFind" class="grow" type="search" placeholder="Ara: adres, ad veya açıklama" autocomplete="off">
+        <span id="symCount" class="pill"></span>
       </div>
+      <p class="note" style="margin:0 0 4px">Ad, ladder'da adresin yerine görünür ve adres yazılan her yere yazılabilir. Harf, rakam ve _ kullanın; rakamla başlamasın.</p>
       <ul id="symMsgs" class="msgs" style="margin-top:8px"></ul>
       <div class="table-wrap" style="margin-top:8px">
         <table>
@@ -779,7 +868,7 @@
         <canvas id="trCanvas"></canvas>
         <div id="trTip" class="tip" hidden></div>
       </div>
-      <p class="tag" style="margin:6px 0 0">Sayı değerleri (AI, D, T, C) üstte ortak eksende, bitler (I, Q, M, S) altta ayrı şeritlerde çizilir.
+      <p class="note">Sayı değerleri (AI, D, T, C) üstte ortak eksende, bitler (I, Q, M, S) altta ayrı şeritlerde çizilir.
         Veri izleme periyodunda (Pinler → Kart ayarları) toplanır, son 5 dakika saklanır.</p>
     </div>
   </section>
@@ -789,28 +878,26 @@
   <section id="tab-set" class="tab" hidden>
     <div class="card" style="margin-bottom:14px">
       <h2>Kart saati</h2>
-      <div class="row"><span id="rtcBox" hidden>Kart saati: <b id="rtcNow">—</b> <button id="btnRtcSync" title="PC saatini karta gönder">PC saatini karta aktar</button></span>
-        <span id="rtcOff" class="tag">Kart bağlı değil.</span></div>
-      <p class="tag">Kart saati, panel karta bağlanınca PC saatinden kendiliğinden alınır. Enerji kesilince kaybolur; zaman aralığı (TW) kontakları ve RT değerleri bu saati kullanır.</p>
+      <div class="clock"><span id="rtcBox" class="clock" hidden><b id="rtcNow">—</b> <button id="btnRtcSync" class="primary" title="PC saatini karta gönder">PC saatini karta aktar</button></span>
+        <span id="rtcOff" class="pill">Kart bağlı değil.</span></div>
+      <p class="note">Kart saati, panel karta bağlanınca PC saatinden kendiliğinden alınır. Enerji kesilince kaybolur; zaman aralığı (TW) kontakları ve RT değerleri bu saati kullanır.</p>
     </div>
     <div class="card" style="margin-bottom:14px">
       <h2>Görünüm</h2>
-      <div class="row">
-        <span class="tag" style="min-width:80px">Tema</span>
-        <div class="seg" id="themeSeg">
-          <button data-theme-set="auto">Otomatik</button>
-          <button data-theme-set="light">Açık</button>
-          <button data-theme-set="dark">Koyu</button>
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px">
-        <span class="tag" style="min-width:80px">Ana renk</span>
-        <div id="accentRow" class="swatches"></div>
+      <div class="setlist">
+        <div class="set-row"><span class="set-l"><b>Tema</b><small>Otomatik: Windows'un açık/koyu ayarını izler.</small></span>
+          <div class="seg" id="themeSeg">
+            <button data-theme-set="auto">Otomatik</button>
+            <button data-theme-set="light">Açık</button>
+            <button data-theme-set="dark">Koyu</button>
+          </div></div>
+        <div class="set-row"><span class="set-l"><b>Ana renk</b><small>Düğmeler, seçim ve vurgular bu renkte olur.</small></span>
+          <div id="accentRow" class="swatches"></div></div>
       </div>
     </div>
     <div class="card">
       <h2>Yazı boyutu</h2>
-      <p class="tag" style="margin:0 0 8px">“Varsayılan” = Tüm sayfa ile aynı boyut.</p>
+      <p class="note" style="margin:0 0 10px">“Varsayılan” = Tüm sayfa ile aynı boyut.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Bölüm</th><th>Boyut</th><th>Örnek</th></tr></thead>
@@ -843,7 +930,7 @@
         <input id="fwFile" type="file" accept=".bin,application/octet-stream" hidden>
       </div>
       <div id="fwProg" class="fwprog" hidden><div class="fwbar"><i></i></div><span id="fwProgTxt" class="tag"></span></div>
-      <p class="tag" style="margin:8px 0 0">Yalnız uygulama yazılır (0x10000). Program, semboller ve pin ayarları kartta korunur.
+      <p class="note">Yalnız uygulama yazılır (0x10000). Program, semboller ve pin ayarları kartta korunur.
         Yükleme sırasında program durur, bitince kart kendiliğinden yeniden başlar. Yükleme bitene kadar USB kablosunu çıkarmayın.</p>
     </div>
   </section>
@@ -852,8 +939,8 @@
   <section id="tab-pins" class="tab" hidden>
     <div class="card">
       <h2>Kart ayarları</h2>
-      <div class="row">
-        <label>İzleme periyodu
+      <div class="setlist">
+        <label class="set-row"><span class="set-l"><b>İzleme periyodu</b><small>Canlı izleme, izleme tablosu ve trendin güncellenme sıklığı. 100 ms önerilir.</small></span>
           <select id="monPeriod" disabled>
             <option value="100" selected>100 ms</option>
             <option value="200">200 ms</option>
@@ -861,13 +948,13 @@
             <option value="1000">1 s</option>
           </select>
         </label>
-        <label>Durum LED pini
+        <label class="set-row"><span class="set-l"><b>Durum LED pini</b><small>Kartın RGB durum LED'i: RUN yeşil, STOP sarı, hata kırmızı.</small></span>
           <select id="ledPin" disabled>
             <option value="48">GPIO48</option>
             <option value="38">GPIO38</option>
           </select>
         </label>
-        <label title="Giriş bu süre boyunca sabit kalmadan değişiklik kabul edilmez (kontak sıçramasına karşı)">Giriş filtresi
+        <label class="set-row"><span class="set-l"><b>Giriş filtresi</b><small>Dijital giriş bu süre sabit kalmadan değişiklik kabul edilmez (kontak sıçramasına karşı). Sayıcı bir basışta birden çok sayıyorsa artırın.</small></span>
           <select id="filterMs" disabled>
             <option value="0">Kapalı</option>
             <option value="5">5 ms</option>
@@ -877,16 +964,18 @@
             <option value="100">100 ms</option>
           </select>
         </label>
-        <label title="Tüm PWM pinleri için ortak frekans">PWM frekansı
+        <label class="set-row"><span class="set-l"><b>PWM frekansı</b><small>Tüm PWM pinleri için ortak. Fan ve motorda duyulan ıslık için yüksek frekans seçin. Yalnız STOP'ta değişir.</small></span>
           <select id="pwmFreq" disabled>
             <option value="100">100 Hz</option><option value="500">500 Hz</option><option value="1000" selected>1 kHz</option>
             <option value="2000">2 kHz</option><option value="5000">5 kHz</option><option value="10000">10 kHz</option><option value="20000">20 kHz</option>
           </select>
         </label>
-        <span class="tag" title="Mod kalıcıdır: kart enerji kesilip gelince veya resetten sonra son moduyla (RUN/STOP) açılır.">RUN/STOP modu kalıcı · BOOT tuşu 5 sn: RUN ↔ STOP</span>
-        <button id="btnAllOff" disabled>Tüm pinleri kapat</button>
+        <div class="set-row"><span class="set-l"><b>RUN / STOP modu</b><small>Kalıcıdır: enerji gelince veya resetten sonra kart son moduyla açılır. Karttaki BOOT tuşu 5 sn basılı tutulursa RUN ↔ STOP.</small></span>
+          <span class="set-c"><span class="pill acc">Kalıcı</span></span></div>
+        <div class="set-row"><span class="set-l"><b>Tüm pinleri kapat</b><small>Bütün GPIO'ları Kapalı moda alır; giriş/çıkış ayarlarının hepsi sıfırlanır.</small></span>
+          <button id="btnAllOff" disabled>Tüm pinleri kapat</button></div>
       </div>
-      <p class="tag">Pin ayarı, LED ve elle çıkış yalnız STOP modunda değiştirilebilir. Analog aralık 0–3.0 V.</p>
+      <p class="note">Pin ayarı, LED ve elle çıkış yalnız STOP modunda değiştirilebilir. Analog aralık 0–3.0 V.</p>
     </div>
     <div class="card" style="margin-top:14px" id="retCard">
       <h2>Kalıcı hafıza</h2>
@@ -986,9 +1075,16 @@
     </div>
     <div class="card" style="margin-top:14px">
       <h2>Pinler</h2>
+      <div class="pin-tools">
+        <div class="seg" id="pinFilter">
+          <button data-pf="all" class="active">Tümü</button><button data-pf="used">Kullanılanlar</button><button data-pf="in">Girişler</button>
+          <button data-pf="out">Çıkışlar</button><button data-pf="pwm">PWM</button><button data-pf="ai">Analog</button>
+        </div>
+        <div class="pin-sum" id="pinSum"></div>
+      </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>GPIO</th><th>Adres</th><th>Mod</th><th>Değer</th><th>Çıkış</th></tr></thead>
+          <thead><tr><th>GPIO</th><th>Adres</th><th>Mod</th><th>Değer</th><th>Elle kumanda</th></tr></thead>
           <tbody id="pins"><tr><td colspan="5" class="tag">Bağlantı bekleniyor…</td></tr></tbody>
         </table>
       </div>
@@ -1222,6 +1318,41 @@ function tipOf(addr) {
   const s = symOf(addr), a = A(addr);
   const ad = a?.s || addr, d = addrDesc(a);
   return (s ? `${ad} = ${s.name}${s.comment ? " — " + s.comment : ""}` : ad) + (d ? ` · ${d}` : "");
+}
+// Fareyle elemanın üzerine gelince anlık açıklama balonu. Rung çizimi canlı izlemede sürekli yenilendiği için
+// tarayıcının title balonu açılamıyordu; balon ayrı bir katmanda durur.
+const cellTip = document.createElement("div");
+cellTip.className = "cell-tip"; cellTip.hidden = true;
+document.body.appendChild(cellTip);
+let tipKey = "";
+function hideCellTip() { cellTip.hidden = true; tipKey = ""; }
+function cellTipHtml(cell) {
+  const seen = new Set(), rows = [];
+  for (const k of ADDR_KEYS) {
+    if (cell[k] == null || cell[k] === "") continue;
+    const a = A(cell[k]); if (!a || a.area === "K" || seen.has(a.s)) continue;
+    seen.add(a.s);
+    const sym = symOf(a.s), d = addrDesc(a);
+    rows.push(`<div class="ct-r${SYS_DESC[a.s] ? " sys" : ""}"><b>${esc(a.s)}</b>${sym ? `<span class="nm">${esc(sym.name)}</span>` : ""}
+      <div class="ct-d">${esc(d)}${sym?.comment ? (d ? " · " : "") + esc(sym.comment) : ""}</div></div>`);
+  }
+  return `<div class="ct-h">${esc(elemDesc(cell.t) || cell.t)}</div>${rows.join("")}`;
+}
+function cellTipMove(e) {
+  const svg = e.target.closest?.("svg.rung-svg");
+  if (!svg || pop) return hideCellTip();
+  const g = +svg.dataset.g, rect = svg.getBoundingClientRect(), k = svg.viewBox.baseVal.width / rect.width;
+  const c = Math.floor(((e.clientX - rect.left) * k - LX) / CW), r = Math.floor((e.clientY - rect.top) * k / RH);
+  const cell = c >= 0 && c < NC ? project.rungs[g]?.cells[r]?.[c] : null;
+  if (!cell || cell.t === "W") return hideCellTip();
+  const key = `${g},${r},${c},${JSON.stringify(cell)}`;
+  if (key !== tipKey) { tipKey = key; cellTip.innerHTML = cellTipHtml(cell); }
+  cellTip.hidden = false;
+  const w = cellTip.offsetWidth, h = cellTip.offsetHeight;
+  let x = e.clientX + 16, y = e.clientY + 18;
+  if (x + w > innerWidth - 8) x = Math.max(8, e.clientX - 16 - w);
+  if (y + h > innerHeight - 8) y = Math.max(8, e.clientY - 14 - h);
+  cellTip.style.left = x + "px"; cellTip.style.top = y + "px";
 }
 // Eleman açıklaması: paletteki düğmenin açıklaması
 function elemDesc(t) {
@@ -1649,7 +1780,7 @@ function drawCell(cell, x, y) {
   const wl = (x1, x2) => `<line class="w" x1="${x1}" y1="${ym}" x2="${x2}" y2="${ym}"/>`;
   if (t === "W") return wl(x, x + CW);
   // Fareyle üzerine gelince adres, sembol adı ve açıklama
-  const tip = `<title>${esc([elemDesc(t), ...ADDR_KEYS.filter(k => cell[k] != null && cell[k] !== "" && A(cell[k])?.area !== "K").map(k => tipOf(cell[k]))].filter(Boolean).join("\n"))}</title>`;
+  const tip = "";   // açıklama: kendi balonumuz (cellTip); SVG title canlı izlemede yeniden çizimle kayboluyordu
   // Sembol adı gösteriliyorsa adresi küçük yaz
   const addrNote = (v) => showNames() && symOf(v) ? `<text class="addr" x="${cx}" y="${y + 61}">${esc(A(v)?.s)}</text>` : "";
   // Zorlanmış adres: hücrenin sağ üstünde mor F
@@ -2270,7 +2401,8 @@ function updateEditUi() {
 }
 // Değişiklik yapan her işlemden önce: kilitliyse düzenleme moduna geçmeyi öner
 async function ensureEdit() {
-  if (!locked()) return true;
+  // STOP'ta (veya bağlı değilken) bir düzenleme başlayınca Düzenleme modu kendiliğinden açılır
+  if (!locked()) { if (!editMode) { await setEditMode(true); log("Düzenleme moduna geçildi"); } return true; }
   if (!await uiConfirm("PLC çalışıyor (RUN). Programı değiştirmek için Düzenle moduna geçilsin mi?\nPLC STOP konumuna alınır, program durur ve çıkışlar kapanır.", { kind: "danger", ok: "Düzenle moduna geç" })) return false;
   return await setEditMode(true, true);
 }
@@ -2278,7 +2410,7 @@ const guarded = (fn) => async (...a) => { if (await ensureEdit()) return fn(...a
 
 async function openCellEditor(g, r, c, x, y) {
   const cell = project.rungs[g]?.cells[r]?.[c];
-  if (!cell || cell.t === "W" || !cellFields(cell.t).length) return;
+  if (!cell || cell.t === "W" || !cellFields(cell.t).length) { await ensureEdit(); return; }
   if (!(await ensureEdit())) return;
   refreshAddrList2();
   pop = { g, r, c };
@@ -2481,12 +2613,26 @@ function buildSymbols() {
       <td><input data-f="addr" value="${esc(s.addr)}" placeholder="I4" style="width:90px" autocomplete="off"></td>
       <td><input data-f="name" value="${esc(s.name)}" placeholder="Start_Buton" autocomplete="off"></td>
       <td><input data-f="comment" value="${esc(s.comment)}" placeholder="açıklama" autocomplete="off"></td>
-      <td class="tag uc">${useCount(s.addr)}</td>
+      <td class="uc"><span class="${useCount(s.addr) ? "u" : ""}" title="Programda kaç yerde kullanılıyor">${useCount(s.addr)}</span></td>
       <td><button class="sd" title="Satırı sil">✕</button></td>
     </tr>`).join("")
     : `<tr><td colspan="5" class="tag">Sembol yok. “+ Satır” ile ekleyin.</td></tr>`;
   updateSymMsgs();
+  applySymFind();
 }
+// Sembol arama: eşleşmeyen satırları gizler
+function applySymFind() {
+  const q = ($("symFind").value || "").trim().toLocaleLowerCase("tr");
+  let shown = 0, all = 0;
+  document.querySelectorAll("#symBody tr[data-i]").forEach(tr => {
+    all++;
+    const t = [...tr.querySelectorAll("input")].map(x => x.value).join(" ").toLocaleLowerCase("tr");
+    tr.hidden = !!q && !t.includes(q);
+    if (!tr.hidden) shown++;
+  });
+  $("symCount").textContent = q ? `${shown} / ${all} sembol` : `${all} sembol`;
+}
+$("symFind").addEventListener("input", applySymFind);
 function updateSymMsgs() {
   const { msgs, bad } = symProblems();
   $("symMsgs").innerHTML = msgs.map(m => `<li class="err">${esc(m)}</li>`).join("");
@@ -2951,7 +3097,7 @@ function buildPinTable() {
       const di = ["DI", "DIPU", "DIPD"].includes(modes[i]);
       try { await send(isSim() && di ? `SIMIN ${pin.g} ${next}` : `SET ${pin.g} ${next}`); } catch {}
     });
-    tr.innerHTML = `<td>GPIO${pin.g}${pin.name ? ` <b>${esc(pin.name)}</b>` : ""}${pin.adc ? ' <span class="tag">ADC</span>' : ""}${pin.in ? ' <span class="tag">yalnız giriş</span>' : ""}</td><td class="tag addr"></td>`;
+    tr.innerHTML = `<td><span class="gp">GPIO${pin.g}</span><span class="pins-pills">${pin.name ? `<span class="pill acc">${esc(pin.name)}</span>` : ""}${pin.adc ? '<span class="pill">ADC</span>' : ""}${pin.in ? '<span class="pill">yalnız giriş</span>' : ""}</span></td><td class="addr"></td>`;
     const tdMode = document.createElement("td"); tdMode.appendChild(sel);
     const tdVal = document.createElement("td"); tdVal.className = "val";
     const pw = document.createElement("input");
@@ -2968,18 +3114,54 @@ function buildPinTable() {
       pw.value = v;
       try { await send(`SET ${pin.g} ${v}`); log(`GPIO${pin.g} PWM → ${pwmText(v)}`); } catch {}
     });
-    const tdOut = document.createElement("td"); tdOut.append(btn, pw);
+    // Kaydırıcı (PWM 0–1000 ‰, simülasyonda analog mV) ve hızlı yüzde düğmeleri
+    const rg = document.createElement("input");
+    rg.type = "range"; rg.className = "pwrange"; rg.min = 0; rg.max = 1000; rg.step = 10;
+    const rgFill = () => rg.style.setProperty("--p", (+rg.value / (+rg.max || 1000) * 100) + "%");
+    rg.addEventListener("input", () => { pw.value = rg.value; rgFill(); });
+    rg.fill = rgFill;
+    rg.addEventListener("change", () => { pw.value = rg.value; pw.dispatchEvent(new Event("change")); });
+    pw.addEventListener("change", () => { rg.value = pw.value; rgFill(); });
+    const qs = document.createElement("span"); qs.className = "pwqs";
+    for (const p of [0, 25, 50, 75, 100]) {
+      const b = document.createElement("button"); b.className = "pwq"; b.textContent = p + "%"; b.title = "PWM %" + p + " (" + p * 10 + " ‰)";
+      b.addEventListener("click", () => { pw.value = p * 10; pw.dispatchEvent(new Event("change")); });
+      qs.appendChild(b);
+    }
+    const tdOut = document.createElement("td"); tdOut.append(btn, pw, rg, qs);
     tr.append(tdMode, tdVal, tdOut);
     tb.appendChild(tr);
     renderPinRow(i);
   });
+  pinSummary();
 }
+// Pin türü (renk şeridi ve süzgeç için)
+const pinKind = (m) => ["DI", "DIPU", "DIPD"].includes(m) ? "in" : m === "DO" ? "out" : m === "AI" ? "ai" : m === "PWM" ? "pwm" : "off";
+let pinFilter = "all";
+function pinVisible(k) { return pinFilter === "all" || (pinFilter === "used" ? k !== "off" : k === pinFilter); }
+function pinSummary() {
+  if (!info?.pins) { $("pinSum").innerHTML = ""; return; }
+  const n = { in: 0, out: 0, ai: 0, pwm: 0, off: 0 };
+  info.pins.forEach((p, i) => n[pinKind(modes[i])]++);
+  const L = [["in", "giriş"], ["out", "çıkış"], ["ai", "analog"], ["pwm", "PWM"], ["off", "kapalı"]];
+  $("pinSum").innerHTML = L.map(([k, t]) => `<span class="pill"><i style="background:${k === "off" ? "var(--off)" : "var(--k-" + k + ")"}"></i>${n[k]} ${t}</span>`).join("");
+}
+$("pinFilter").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-pf]"); if (!b) return;
+  pinFilter = b.dataset.pf;
+  document.querySelectorAll("#pinFilter button").forEach(x => x.classList.toggle("active", x === b));
+  if (info?.pins) info.pins.forEach((p, i) => renderPinRow(i));
+});
 
 function renderPinRow(i) {
   const tr = $("pins").children[i];
   if (!tr) return;
   const g = info.pins[i].g, m = modes[i];
-  tr.children[1].textContent = ["DI", "DIPU", "DIPD"].includes(m) ? `I${g}` : m === "DO" ? `Q${g}` : m === "AI" ? `AI${g}` : m === "PWM" ? `PW${g}` : "";
+  const kind = pinKind(m), ad = { in: `I${g}`, out: `Q${g}`, ai: `AI${g}`, pwm: `PW${g}` }[kind];
+  tr.dataset.kind = kind;
+  tr.hidden = !pinVisible(kind);
+  tr.children[1].innerHTML = ad ? `<span class="apill ${kind}" title="Ladder'da bu adresle kullanılır">${ad}</span>` : "";
+  pinSummary();
   const simDi = isSim() && ["DI", "DIPU", "DIPD"].includes(m), simAi = isSim() && m === "AI";
   tr.children[4].firstChild.hidden = m !== "DO" && !simDi;
   const pw = tr.children[4].children[1];
@@ -2988,6 +3170,11 @@ function renderPinRow(i) {
   pw.step = simAi ? 50 : 10;
   pw.placeholder = simAi ? "mV" : "0–1000";
   pw.title = simAi ? "Simülasyon: analog giriş (0–3000 mV)" : "Elle PWM (0–1000 ‰), yalnız STOP";
+  const rg = tr.children[4].children[2], qs = tr.children[4].children[3];
+  rg.hidden = pw.hidden; rg.max = pw.max; rg.step = pw.step; rg.classList.toggle("ai", simAi);
+  rg.title = pw.title;
+  rg.fill?.();
+  qs.hidden = m !== "PWM";
   tr.children[3].innerHTML = m === "OFF" ? '<span class="tag">—</span>' : "";
 }
 
@@ -3001,15 +3188,18 @@ function updatePinValues(v, running) {
     const m = modes[i];
     if (m === "OFF" || val < 0) return;
     if (m === "PWM") {
-      td.innerHTML = `${pwmText(val)}<span class="bar" style="width:${Math.min(100, val / 10) * 0.8}px"></span>`;
-      const pw = tr.children[4].children[1];
-      pw.disabled = running;
+      td.innerHTML = `${pwmText(val)}<span class="meterx"><i style="width:${Math.min(100, val / 10)}%"></i></span>`;
+      const pw = tr.children[4].children[1], rg = tr.children[4].children[2];
+      pw.disabled = running; rg.disabled = running;
+      tr.children[4].children[3].querySelectorAll("button").forEach(b => b.disabled = running);
       if (document.activeElement !== pw) pw.value = val;
+      if (document.activeElement !== rg) { rg.value = val; rg.fill?.(); }
     } else if (m === "AI") {
       const w = Math.max(0, Math.min(100, val / (info.aimax || 3000) * 100));
-      td.innerHTML = `${(val / 1000).toFixed(3)} V<span class="bar" style="width:${w * 0.8}px"></span>`;
-      const pw = tr.children[4].children[1];
+      td.innerHTML = `${(val / 1000).toFixed(3)} V<span class="meterx ai"><i style="width:${w}%"></i></span>`;
+      const pw = tr.children[4].children[1], rg = tr.children[4].children[2];
       if (isSim() && document.activeElement !== pw) pw.value = val;
+      if (isSim() && document.activeElement !== rg) { rg.value = val; rg.fill?.(); }
     } else {
       td.innerHTML = `<span class="lamp ${val ? "on" : ""}"></span>${val ? "1" : "0"}`;
       if (m === "DO") {
@@ -4146,6 +4336,10 @@ document.querySelectorAll("details.tg").forEach(d => d.addEventListener("toggle"
   try { localStorage.setItem(TG_KEY, JSON.stringify(st)); } catch {}
 }));
 
+$("rungs").addEventListener("mousemove", cellTipMove);
+$("rungs").addEventListener("mouseleave", hideCellTip);
+$("rungs").addEventListener("mousedown", hideCellTip);
+addEventListener("scroll", hideCellTip, { passive: true });
 $("rungs").addEventListener("click", async (e) => {
   const svg = e.target.closest("svg.rung-svg");
   if (svg) {
