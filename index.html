@@ -840,7 +840,7 @@
         </details>
         <details class="tg" data-tg="analog"><summary><svg class="ic" aria-hidden="true"><use href="#i-wave"/></svg>Analog</summary>
           <button class="tool" data-t="SCALE" title="Doğrusal ölçekleme: giriş aralığı → çıkış aralığı (ör. 0–3000 mV → 0–100 °C). Sonuç çıkış aralığına sınırlanır."><span class="sym">SCALE</span>Ölçekle</button>
-          <button class="tool" data-t="PID" title="PID kontrol: ölçülen (PV) değeri hedefe (SP) götürür. Çıkış 0–1000 ‰ (doğrudan PW'ye bağlanabilir). Kp kazanç (negatif: ters etki, ör. soğutma), Ti integral süresi s (0 = yok), Td türev süresi s. Hat enerjisizken integral sıfırlanır, çıkış olduğu gibi kalır."><span class="sym">PID</span>PID kontrol</button>
+          <button class="tool" data-t="PID" title="PID kontrol: ölçülen (PV) değeri hedefe (SP) götürür. Çıkış %0–100 (doğrudan PW'ye bağlanabilir). Kp kazanç (negatif: ters etki, ör. soğutma), Ti integral süresi s (0 = yok), Td türev süresi s. Hat enerjisizken integral sıfırlanır, çıkış olduğu gibi kalır."><span class="sym">PID</span>PID kontrol</button>
           <button class="tool" data-t="LIMIT" title="Değeri min–maks aralığına sınırla"><span class="sym">LIMIT</span>Sınırla</button>
         </details>
         <details class="tg" data-tg="akis"><summary><svg class="ic" aria-hidden="true"><use href="#i-flow"/></svg>Program akışı</summary>
@@ -873,7 +873,7 @@
         <code>S4</code> 10 Hz, <code>S5</code> 2 Hz, <code>S6</code> 0,5 Hz, <code>S7</code> 1 dk, <code>S8</code> kart saati ayarlı. Süreler ms.
         Saat: <code>RT0</code> yıl, <code>RT1</code> ay, <code>RT2</code> gün, <code>RT3</code> saat, <code>RT4</code> dakika, <code>RT5</code> saniye,
         <code>RT6</code> haftanın günü (1 Pzt–7 Paz), <code>RT7</code> günün dakikası (0–1439), <code>RT8</code> saat ayarlı.
-        <code>PW5</code>: PWM çıkışı (0–1000 ‰); MOV, SCALE gibi kutuların hedefi olabilir.
+        <code>PW5</code>: PWM çıkışı, yüzde (0–100, ondalıklı olabilir: 37.5); MOV, SCALE gibi kutuların hedefi olabilir.
         <code>HC0–HC3</code> hızlı sayıcı, <code>HF0–HF3</code> frekans (Pinler → Hızlı sayıcı).
         <code>F0–F63</code>: ondalıklı sayı. <code>1.5</code> gibi ondalıklı sabit yazılabilir; işlenenlerden biri ondalıklıysa kutu ondalıklı hesaplar, hedef D ise sonuç yuvarlanır.
         Dev karttaki BOOT tuşu: <code>I0</code> (Pinler'de giriş yapın; basınca 0).
@@ -1164,7 +1164,7 @@
               <tr><td>Input reg. (FC04)</td><td>0–48 · 100–131 · 200–231 · 300–308 · 400–407 · 410–417</td><td>AI mV · T geçen süre · C değeri · RT0–RT8 saat · HC0–HC3 (32 bit, üst kelime önce) · HF0–HF3 Hz (32 bit)</td><td>okunur</td></tr>
               <tr><td>Holding reg. (FC03/06/16)</td><td>0–127</td><td>D0–D63, 32 bit (2n üst, 2n+1 alt kelime)</td><td>okunur/yazılır</td></tr>
               <tr><td>Holding reg.</td><td>1000–1063</td><td>D0–D63, 16 bit işaretli</td><td>okunur/yazılır</td></tr>
-              <tr><td>Holding reg.</td><td>2000–2048</td><td>PW (GPIO no), PWM 0–1000 ‰</td><td>okunur/yazılır (PWM pinleri)</td></tr>
+              <tr><td>Holding reg.</td><td>2000–2048</td><td>PW (GPIO no), PWM yüzde × 10 (0–1000 = %0,0–%100,0)</td><td>okunur/yazılır (PWM pinleri)</td></tr>
               <tr><td>Holding reg.</td><td>4000–4127</td><td>F0–F63 aynı değerler, CDAB sırası (Fn = 4000+2n alt, 4001+2n üst kelime)</td><td>okunur/yazılır (CDAB bekleyen HMI'lar için)</td></tr>
               <tr><td>Holding reg.</td><td>3000–3127</td><td>F0–F63 ondalıklı (IEEE-754 float, 2 register: Fn = 3000+2n üst, 3001+2n alt kelime; ABCD)</td><td>okunur/yazılır (FC16 ile ikisi birlikte yazılmalı)</td></tr>
             </tbody>
@@ -1205,7 +1205,7 @@
       <div class="pin-groups">
         <section class="pgrp dropzone" data-zone="in"><header><i></i>Girişler <small>I · dijital</small><span class="n pill"></span></header><div class="pg-list" id="pg-in"></div><div class="pg-empty">Giriş yok. Pini buraya sürükleyin.</div></section>
         <section class="pgrp dropzone" data-zone="out"><header><i></i>Çıkışlar <small>Q · dijital</small><span class="n pill"></span></header><div class="pg-list" id="pg-out"></div><div class="pg-empty">Çıkış yok. Pini buraya sürükleyin.</div></section>
-        <section class="pgrp dropzone" data-zone="pwm"><header><i></i>PWM <small>PW · 0–1000 ‰</small><span class="n pill"></span></header><div class="pg-list" id="pg-pwm"></div><div class="pg-empty">PWM çıkışı yok. Pini buraya sürükleyin.</div></section>
+        <section class="pgrp dropzone" data-zone="pwm"><header><i></i>PWM <small>PW · %0–100</small><span class="n pill"></span></header><div class="pg-list" id="pg-pwm"></div><div class="pg-empty">PWM çıkışı yok. Pini buraya sürükleyin.</div></section>
         <section class="pgrp dropzone" data-zone="ai"><header><i></i>Analog <small>AI · mV</small><span class="n pill"></span></header><div class="pg-list" id="pg-ai"></div><div class="pg-empty">Analog giriş yok. ADC pinini buraya sürükleyin.</div></section>
       </div>
     </div>
@@ -1432,7 +1432,7 @@ const SYS_DESC = {
 function addrDesc(a) {
   if (!a) return "";
   if (SYS_DESC[a.s]) return SYS_DESC[a.s];
-  return { I: "dijital giriş (GPIO" + a.n + ")", Q: "dijital çıkış (GPIO" + a.n + ")", AI: "analog giriş, mV (GPIO" + a.n + ")", PW: "PWM çıkışı 0–1000 ‰ (GPIO" + a.n + ")",
+  return { I: "dijital giriş (GPIO" + a.n + ")", Q: "dijital çıkış (GPIO" + a.n + ")", AI: "analog giriş, mV (GPIO" + a.n + ")", PW: "PWM çıkışı, yüzde 0–100 (GPIO" + a.n + ")",
     M: "yardımcı bit", T: "zamanlayıcı (bit: çıkış, sayı: geçen ms)", C: "sayıcı (bit: çıkış, sayı: değer)", D: "tam sayı değişken", F: "ondalıklı değişken",
     HC: "hızlı sayıcı değeri", HF: "hızlı sayıcı frekansı (Hz)" }[a.area] || "";
 }
@@ -1572,7 +1572,10 @@ function pinMode(g) {
   return i < 0 ? undefined : modes[i];
 }
 const fmtF = (v) => v == null ? "—" : Number(v).toLocaleString("tr-TR", { maximumFractionDigits: 3 });
-const pwmText = (v) => v == null ? "—" : "%" + (v / 10).toFixed(1).replace(".", ",");
+const pwmText = (v) => v == null ? "—" : "%" + (v / 10).toFixed(1).replace(".", ",");   // v: binde (pin değeri, MON)
+const pctText = (p) => p == null ? "—" : "%" + (Math.round(p * 10) / 10).toFixed(1).replace(".", ",");   // p: yüzde
+// V3.3+: ladder'da PW yüzde (0–100). Eski firmware'de binde (0–1000).
+const pwPct = () => info?.pwu === "pct";
 // Kart saatinden RT0..RT8 (MON "tm": yerel saat epoch, -1 = ayarlı değil)
 function rtWords() {
   const tm = mon?.tm ?? info?.tm;
@@ -1784,6 +1787,7 @@ function compile() {
   });
   flowCheck(out);
   ioDirCheck(out);
+  pwRangeCheck(out);
   if (pidNo > 16) out.errors.push(`PID sayısı ${pidNo} (en çok 16)`);
   if (mbJob > 32) out.errors.push(`Modbus kutusu sayısı ${mbJob} (en çok 32)`);
   if (edge > 128) out.errors.push(`Kenar kontak sayısı ${edge} (en çok 128)`);
@@ -1791,6 +1795,19 @@ function compile() {
   return out;
 }
 
+// PW yüzde (0–100): PW'ye 100'den büyük sabit yazan kutular uyarı verir (eski binde programları)
+function pwRangeCheck(out) {
+  if (info && !pwPct()) return;
+  project.rungs.forEach((rg, gi) => rg.cells.forEach((row, r) => row.forEach((cell, c) => {
+    if (!cell || A(cell.c)?.area !== "PW") return;
+    const keys = { MOV: ["a"], SCALE: ["f", "g"], LIMIT: ["b", "d"] }[cell.t] || [];
+    for (const k of keys) {
+      const a = A(cell[k]);
+      const v = a?.area === "K" ? a.n : null;
+      if (v != null && +v > 100) out.warnings.push(`Rung ${gi + 1} [${r + 1},${c + 1}]: ${A(cell.c).s} yüzde (0–100); ${cell[k]} değeri %100'e sınırlanır`);
+    }
+  })));
+}
 // Aynı GPIO programda hem giriş (I/AI) hem çıkış (Q/PW) olarak kullanılamaz
 function ioDirCheck(out) {
   const by = {};
@@ -1885,6 +1902,7 @@ function compileHint(m) {
     [/SBR .* içinde de var|LBL .* içinde de var/, "Aynı numara iki kez kullanılmış; rung başlığından birinin numarasını değiştirin."],
     [/hiç çağrılmıyor/, "Bu alt program hiçbir CALL ile çağrılmıyor, çalışmaz. Ana programa CALL kutusu ekleyin."],
     [/komut üretilmedi/, "Rung boş veya yalnız çizgiden oluşuyor; silin ya da eleman ekleyin."],
+    [/yüzde \(0–100\)/, "PWM (PW) değeri yüzdedir: %50 için 50 yazın. Eski programlarda (binde, 0–1000) değeri 10'a bölün (ör. 250 → 25)."],
     [/en çok/, "Kapasite aşıldı; program bölünmeli veya sadeleştirilmeli."],
   ];
   for (const [re, h] of H) if (re.test(m)) return h;
@@ -1951,7 +1969,8 @@ function liveWord(s) {
     case "D": return mon.d?.[a.n] ?? null;
     case "T": return (mon.ta || mon.t)?.[a.n] ?? null;
     case "C": return (mon.ca || mon.c)?.[a.n] ?? null;
-    case "AI": case "PW": { const v = pinValue(a.n); return v == null || v < 0 ? 0 : v; }
+    case "AI": { const v = pinValue(a.n); return v == null || v < 0 ? 0 : v; }
+    case "PW": { const v = pinValue(a.n), w = v == null || v < 0 ? 0 : v; return pwPct() ? w / 10 : w; }
     case "RT": return rtWords()?.[a.n] ?? 0;
     case "F": return mon.f?.[a.n] ?? null;
     case "HC": return mon.hc?.[a.n] ?? 0;
@@ -2072,7 +2091,8 @@ function drawCell(cell, x, y) {
     else line2 = `${esc(disp(cell.a, 4))} ${MATH_SYM[t]} ${esc(disp(cell.b, 4))}`;
     s += `<text x="${cx}" y="${y + 33}">${line2}</text>`;
     const v = mon && $("chkLive").checked ? liveWord(cell.c) : null;
-    s += `<text x="${cx}" y="${y + 48}">→ ${esc(disp(cell.c, v != null ? 5 : 9))}${v != null ? `<tspan class="val">=${v}</tspan>` : ""}</text>`;
+    const vt = v == null ? "" : A(cell.c)?.area === "PW" && pwPct() ? pctText(v) : (Number.isInteger(v) ? v : fmtF(v));
+    s += `<text x="${cx}" y="${y + 48}">→ ${esc(disp(cell.c, v != null ? 5 : 9))}${v != null ? `<tspan class="val">=${vt}</tspan>` : ""}</text>`;
   }
   return `<g>${s}</g>`;
 }
@@ -2338,7 +2358,7 @@ function updateWatch() {
     else if (a.area === "C") td.innerHTML = `${lamp(liveBit(s))} · ${liveWord(s)}`;
     else if (a.area === "D") td.textContent = liveWord(s);
     else if (a.area === "AI") td.textContent = `${liveWord(s)} mV`;
-    else if (a.area === "PW") td.textContent = pwmText(liveWord(s));
+    else if (a.area === "PW") td.textContent = pwPct() ? pctText(liveWord(s)) : pwmText(liveWord(s));
     else if (a.area === "RT") td.textContent = liveWord(s);
     else if (a.area === "F") td.textContent = fmtF(liveWord(s));
     else if (a.area === "HC") td.textContent = liveWord(s);
@@ -2447,7 +2467,7 @@ function cellFields(t) {
   if (UNARY.includes(t)) return [["a", "Kaynak"], ["c", "Hedef (D)"]];
   if (MATH.includes(t)) return [["a", "A"], ["b", "B"], ["c", "Sonuç (D)"]];
   if (t === "LIMIT") return [["a", "Giriş"], ["b", "Min"], ["d", "Maks"], ["c", "Sonuç (D/F/PW)"]];
-  if (t === "PID") return [["a", "Ölçülen PV (ör. AI4, D5, F1)"], ["b", "Hedef SP"], ["c", "Çıkış 0–1000 (PW, D veya F)"],
+  if (t === "PID") return [["a", "Ölçülen PV (ör. AI4, D5, F1)"], ["b", "Hedef SP"], ["c", "Çıkış %0–100 (PW, D veya F)"],
                            ["d", "Kp kazanç (ör. 2.5)"], ["f", "Ti integral, s (0 = yok)"], ["g", "Td türev, s (0 = yok)"]];
   if (MODBUS.includes(t)) return [["a", "Slave adresi (1–247" + (t === "MBW" ? ", 0 = yayın" : "") + ")"], ["fc", "Fonksiyon"],
     ["b", "Uzak adres (register/coil)"], ["d", "Adet"], ["c", t === "MBR" ? "Yerel hedef (reg → D veya F, bit → M)" : "Yerel kaynak (reg ← D veya F, bit ← M)"],
@@ -2873,7 +2893,7 @@ const fmtNum = (v) => Number.isInteger(v) ? String(v) : v.toFixed(1);
 const fmtDur = (ms) => ms < 60000 ? (ms / 1000).toFixed(ms < 10000 ? 1 : 0) + " s" : (ms / 60000).toFixed(1) + " dk";
 function fmtVal(x, v) {
   if (v == null) return "—";
-  return x.a.area === "PW" ? pwmText(v) : x.a.area === "AI" ? `${v} mV` : x.a.area === "T" ? `${v} ms` : String(v);
+  return x.a.area === "PW" ? (pwPct() ? pctText(v) : pwmText(v)) : x.a.area === "AI" ? `${v} mV` : x.a.area === "T" ? `${v} ms` : String(v);
 }
 function renderTrendLegend(slots, hov) {
   const ref = hov || trend.data[trend.data.length - 1];
@@ -3369,7 +3389,7 @@ STOP'ta, açılışta ve pin kapatılınca çıkış pasif seviyeye (HIGH) gider
       try { await send(isSim() && di ? `SIMIN ${pin.g} ${next}` : `SET ${pin.g} ${next}`); } catch {}
     });
     const pw = document.createElement("input");
-    pw.type = "number"; pw.min = 0; pw.max = 1000; pw.step = 10; pw.className = "pwin";
+    pw.type = "number"; pw.min = 0; pw.max = 100; pw.step = 0.1; pw.className = "pwin";
     pw.addEventListener("change", async () => {
       if (modes[i] === "AI") {   // simülasyon: analog giriş değeri (mV)
         const v = Math.max(0, Math.min(info.aimax || 3000, Math.round(+pw.value || 0)));
@@ -3377,21 +3397,22 @@ STOP'ta, açılışta ve pin kapatılınca çıkış pasif seviyeye (HIGH) gider
         try { await send(`SIMAI ${pin.g} ${v}`); } catch {}
         return;
       }
-      const v = Math.max(0, Math.min(1000, Math.round(+pw.value || 0)));
-      pw.value = v;
+      const pc = Math.max(0, Math.min(100, Math.round((+String(pw.value).replace(",", ".") || 0) * 10) / 10));   // yüzde, 0,1 adım
+      pw.value = pc;
+      const v = Math.round(pc * 10);   // karta binde
       try { await send(`SET ${pin.g} ${v}`); log(`GPIO${pin.g} PWM → ${pwmText(v)}`); } catch {}
     });
     const rg = document.createElement("input");
-    rg.type = "range"; rg.className = "pwrange"; rg.min = 0; rg.max = 1000; rg.step = 10;
-    const rgFill = () => rg.style.setProperty("--p", (+rg.value / (+rg.max || 1000) * 100) + "%");
+    rg.type = "range"; rg.className = "pwrange"; rg.min = 0; rg.max = 100; rg.step = 0.5;
+    const rgFill = () => rg.style.setProperty("--p", (+rg.value / (+rg.max || 100) * 100) + "%");
     rg.fill = rgFill;
     rg.addEventListener("input", () => { pw.value = rg.value; rgFill(); });
     rg.addEventListener("change", () => { pw.value = rg.value; pw.dispatchEvent(new Event("change")); });
     pw.addEventListener("change", () => { rg.value = pw.value; rgFill(); });
     const qs = document.createElement("span"); qs.className = "pwqs";
     for (const p of [0, 25, 50, 75, 100]) {
-      const b = document.createElement("button"); b.className = "pwq"; b.textContent = p + "%"; b.title = "PWM %" + p + " (" + p * 10 + " ‰)";
-      b.addEventListener("click", () => { pw.value = p * 10; pw.dispatchEvent(new Event("change")); });
+      const b = document.createElement("button"); b.className = "pwq"; b.textContent = p + "%"; b.title = "PWM %" + p;
+      b.addEventListener("click", () => { pw.value = p; pw.dispatchEvent(new Event("change")); });
       qs.appendChild(b);
     }
     card.querySelector(".pc-ctl").append(btn, pw, rg, qs);
@@ -3431,11 +3452,11 @@ function renderPinRow(i) {
   const simDi = isSim() && kind === "in", simAi = isSim() && kind === "ai";
   E.btn.hidden = kind !== "out" && !simDi;
   E.pw.hidden = kind !== "pwm" && !simAi;
-  E.pw.max = simAi ? (info.aimax || 3000) : 1000;
-  E.pw.step = simAi ? 50 : 10;
-  E.pw.placeholder = simAi ? "mV" : "0–1000";
-  E.pw.title = simAi ? "Simülasyon: analog giriş (0–3000 mV)" : "Elle PWM (0–1000 ‰), yalnız STOP";
-  E.rg.hidden = E.pw.hidden; E.rg.max = E.pw.max; E.rg.step = E.pw.step; E.rg.title = E.pw.title;
+  E.pw.max = simAi ? (info.aimax || 3000) : 100;
+  E.pw.step = simAi ? 50 : 0.1;
+  E.pw.placeholder = simAi ? "mV" : "%";
+  E.pw.title = simAi ? "Simülasyon: analog giriş (0–3000 mV)" : "Elle PWM, yüzde (0–100), yalnız STOP";
+  E.rg.hidden = E.pw.hidden; E.rg.max = E.pw.max; E.rg.step = simAi ? 50 : 0.5; E.rg.title = E.pw.title;
   E.rg.classList.toggle("ai", simAi); E.rg.fill();
   E.qs.hidden = kind !== "pwm";
   E.card.querySelector(".pc-ctl").hidden = E.btn.hidden && E.pw.hidden;
@@ -3473,8 +3494,8 @@ function updatePinValues(v, running) {
       E.val.innerHTML = `${pwmText(val)}<span class="meterx"><i style="width:${Math.min(100, val / 10)}%"></i></span>`;
       E.pw.disabled = running; E.rg.disabled = running;
       E.qs.querySelectorAll("button").forEach(b => b.disabled = running);
-      if (document.activeElement !== E.pw) E.pw.value = val;
-      if (document.activeElement !== E.rg) { E.rg.value = val; E.rg.fill(); }
+      if (document.activeElement !== E.pw) E.pw.value = val / 10;   // binde → yüzde
+      if (document.activeElement !== E.rg) { E.rg.value = val / 10; E.rg.fill(); }
     } else if (m === "AI") {
       const w = Math.max(0, Math.min(100, val / (info.aimax || 3000) * 100));
       E.val.innerHTML = `${(val / 1000).toFixed(3)} V<span class="meterx ai"><i style="width:${w}%"></i></span>`;

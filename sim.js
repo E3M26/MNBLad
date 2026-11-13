@@ -147,7 +147,7 @@
         case "K": return o.v;
         case "D": return dWords[o.v];
         case "AI": return aiImg[o.v];
-        case "PW": return pwImg[o.v];
+        case "PW": return Math.floor((pwImg[o.v] + 5) / 10);   // V3.3: ladder'da yüzde
         case "RT": return rtW[o.v];
         case "F": return isFinite(fRegs[o.v]) ? lround(fRegs[o.v]) : 0;
         case "KF": return lround(o.v);
@@ -160,13 +160,14 @@
     function wrBit(o, v) { if (o.area === "Q") qImg[o.v] = v ? 1 : 0; else if (o.area === "M") mBits[o.v] = v ? 1 : 0; }
     function wrWord(o, v) {
       if (o.area === "D") dWords[o.v] = i32(v);
-      else if (o.area === "PW") pwImg[o.v] = Math.max(0, Math.min(PWM_MAX, i32(v)));
+      else if (o.area === "PW") pwImg[o.v] = Math.max(0, Math.min(PWM_MAX, i32(v) * 10));   // yüzde → binde
     }
-    const isFlt = (o) => o && (o.area === "F" || o.area === "KF");
-    const rdF = (o) => o.area === "F" ? fRegs[o.v] : o.area === "KF" ? o.v : rdWord(o);
+    const isFlt = (o) => o && (o.area === "F" || o.area === "KF" || o.area === "PW");   // V3.3: PW yüzde, ondalıklı
+    const rdF = (o) => o.area === "F" ? fRegs[o.v] : o.area === "KF" ? o.v : o.area === "PW" ? f32(pwImg[o.v] / 10) : rdWord(o);
     function wrF(o, v) {
       if (o.area === "F") { fRegs[o.v] = isFinite(v) ? v : 0; return; }
       if (!isFinite(v)) v = 0;
+      if (o.area === "PW") { const q = f32(v * 10); pwImg[o.v] = q <= 0 ? 0 : q >= PWM_MAX ? PWM_MAX : lround(q); return; }
       wrWord(o, Math.max(-2147483648, Math.min(2147483520, lround(v))));
     }
     function doCmp(c, a, b) { return [a === b, a !== b, a > b, a < b, a >= b, a <= b][c]; }
@@ -341,10 +342,10 @@
             const d = td > 0 && dts > 0 ? -td * (pv - st.prevPv) / dts : 0;
             const ni = st.i + (ti > 0 ? e * dts / ti : 0);
             let u = kp * (e + ni + d);
-            if (!((u > PWM_MAX && kp * e > 0) || (u < 0 && kp * e < 0))) st.i = ni;
+            if (!((u > 100 && kp * e > 0) || (u < 0 && kp * e < 0))) st.i = ni;   // V3.3: çıkış %0–100
             u = kp * (e + st.i + d);
             if (!isFinite(u)) u = 0;
-            u = Math.max(0, Math.min(PWM_MAX, u));
+            u = Math.max(0, Math.min(100, u));
             st.prevPv = pv;
             wrF(ins.c, f32(u));
           } break;
@@ -501,7 +502,7 @@
         t: "info", fw: "MNBLad Simülasyon", board: "Tarayıcı simülasyonu", sim: 1, led: 48,
         run: running ? 1 : 0, prog: prog.length, autorun: 1, runst: runSt, err: 0,
         pcrc: prog.length ? pcrc : "", pt: prog.length ? pt : 0, pn: prog.length ? pn : "",
-        src: src ? atob(src).length : 0, filt: 0, pwmf, tm: rtLocal, tz: tzMin,
+        src: src ? atob(src).length : 0, filt: 0, pwmf, pwu: "pct", tm: rtLocal, tz: tzMin,
         heap: 0, psram: 0, flash: 0, fs: 0, scan: SCAN_MS, aimax: AI_MAX,
         cap: { m: N_M, t: N_T, c: N_C, d: N_D, e: N_EDGE, r: N_ROWS, ins: MAX_INS, s: N_S },
         pins: ioPins().map(g => ({ g, adc: isAdc(g), ...(isInOnly(g) ? { in: true, name: "BOOT" } : {}) })),
