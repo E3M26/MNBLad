@@ -553,6 +553,11 @@
   .pc-ctl .pwq { margin: 0; flex: 1; }
   #pinsCard.locked .pcard, #pinsCard.locked tr.pfree { cursor: default; }
   #pinsCard.locked .grip { opacity: .3; }
+  /* Çıkış kutbu (aktif LOW) */
+  .pc-pol { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: .86em; cursor: pointer; user-select: none; }
+  .pc-pol small { color: var(--muted); }
+  .pcard.inv .pc-pol span { font-weight: 700; color: var(--kc); }
+  .pc-val .lv { margin-left: 6px; color: var(--muted); font-size: .82em; }
   /* Cihaz profili */
   .devbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 10px 12px; margin: 0 0 12px; border: 1px solid var(--line); border-radius: 10px;
             background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 9%, var(--card)), var(--card)); }
@@ -1278,6 +1283,8 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<":
 // ======================= Durum =======================
 let port = null, writer = null, reader = null, readDone = null, closing = false;
 let info = null, modes = [], mon = null;
+let invs = null;   // çıkış kutbu (V3.1+): 1 = aktif LOW; eski firmware'de null
+const setCfg = (c) => { modes = c.m; invs = Array.isArray(c.inv) ? c.inv : null; };
 let pending = [];
 let busy = false;
 let project = loadProject();
@@ -2298,7 +2305,7 @@ async function simAutoPins() {
   const list = Object.entries(need);
   for (const [g, m] of list) { try { await send(`PIN ${g} ${m}`); } catch {} }
   if (list.length) {
-    modes = (await send("CFG")).m; buildPinTable(); simIOKey = "";
+    setCfg(await send("CFG")); buildPinTable(); simIOKey = "";
     log("Simülasyon: pinler programa göre ayarlandı: " + list.map(([g, m]) => `GPIO${g} ${MODE_LABELS[m]}`).join(", "), "ok");
   }
 }
@@ -3184,7 +3191,7 @@ async function loadBoard() {
   }
   if (info.err) log("Kartta kayıtlı program okunamadı veya geçersiz (LED kırmızı). Programı yeniden yükleyin.", "warn");
   const cfg = await send("CFG");
-  modes = cfg.m;
+  setCfg(cfg);
   if (!isSim()) try { localStorage.setItem("mnblad.lastPins", JSON.stringify(Object.fromEntries(info.pins.map((p, i) => [p.g, modes[i]])))); } catch {}
   if (isSim()) $("statusText").textContent = "Simülasyon";
   buildPinTable();
@@ -3285,6 +3292,18 @@ function pinAllowed(pin, kind) {
 const pinAddr = (g, kind) => ({ in: `I${g}`, out: `Q${g}`, ai: `AI${g}`, pwm: `PW${g}` })[kind] || "";
 const pinPills = (pin) => `${pin.name ? `<span class="pill acc">${esc(pin.name)}</span>` : ""}${pin.adc ? '<span class="pill">ADC</span>' : ""}${pin.in ? '<span class="pill">yalnız giriş</span>' : ""}`;
 
+// Çıkış kutbu: 1 = aktif LOW (yük GND verilince çalışır). Yalnız DO/PWM, yalnız STOP.
+async function setPinInv(i, on) {
+  const pin = info.pins[i];
+  if (mon?.run) { uiAlert("Çıkış kutbu yalnız STOP'ta değiştirilebilir."); renderPinRow(i); return false; }
+  try {
+    await send(`INV ${pin.g} ${on ? 1 : 0}`);
+    if (invs) invs[i] = on ? 1 : 0;
+    log(`GPIO${pin.g}: ${on ? "aktif LOW (yük GND ile çalışır; pasifte HIGH)" : "aktif HIGH (pasifte LOW)"}`);
+  } catch {}
+  renderPinRow(i);
+  return true;
+}
 async function setPinMode(i, m) {
   const pin = info.pins[i], prev = modes[i];
   if (m === prev) { renderPinRow(i); return true; }
@@ -3292,6 +3311,7 @@ async function setPinMode(i, m) {
   try {
     await send(`PIN ${pin.g} ${m}`);
     modes[i] = m;
+    if (invs && !['DO', 'PWM', 'OFF'].includes(m)) invs[i] = 0;   // firmware gibi: giriş pininde kutup yok
     log(`GPIO${pin.g} → ${MODE_LABELS[m]}`);
     lastCompile = null;
   } catch {}
@@ -3319,6 +3339,8 @@ function buildPinTable() {
       <span class="gp">GPIO${pin.g}</span><span class="apill"></span><span class="pc-sym"></span>
       <button class="pc-x" title="Pini kapat (kullanılmayanlara geri gönder)">✕</button></div>
       <div class="pc-b"><select class="pc-mode" title="Pin modu"></select><span class="pc-val"></span></div>
+      <label class="pc-pol" title="Yük, pin GND (0 V) olunca çalışıyorsa işaretleyin. Ladder'da Q=1 / PW değeri yine 'açık' demektir; pin seviyesi terslenir.
+STOP'ta, açılışta ve pin kapatılınca çıkış pasif seviyeye (HIGH) gider."><input type="checkbox"> <span>Aktif LOW</span> <small>yük GND ile çalışır</small></label>
       <div class="pc-ctl"></div>`;
     const sel = card.querySelector(".pc-mode");
     for (const m of info.modes) {
@@ -3329,6 +3351,8 @@ function buildPinTable() {
     }
     sel.addEventListener("change", () => setPinMode(i, sel.value));
     card.querySelector(".pc-x").addEventListener("click", () => setPinMode(i, "OFF"));
+    const pol = card.querySelector(".pc-pol input");
+    pol.addEventListener("change", () => setPinInv(i, pol.checked));
     card.addEventListener("pointerdown", (e) => pinDragStart(e, i, card));
     // Elle kumanda: Aç/Kapat (simülasyonda giriş 1/0), PWM değer kutusu + kaydırıcı + yüzde düğmeleri
     const btn = document.createElement("button");
@@ -3365,7 +3389,7 @@ function buildPinTable() {
       qs.appendChild(b);
     }
     card.querySelector(".pc-ctl").append(btn, pw, rg, qs);
-    pinEl[i] = { row, card, sel, btn, pw, rg, qs, val: card.querySelector(".pc-val") };
+    pinEl[i] = { row, card, sel, btn, pw, rg, qs, pol, val: card.querySelector(".pc-val") };
     renderPinRow(i);
   });
   pinSummary();
@@ -3393,6 +3417,11 @@ function renderPinRow(i) {
   E.card.querySelector(".pc-sym").textContent = sym ? sym.name : "";
   E.card.querySelector(".pc-sym").title = sym?.comment || "";
   if (kind !== "off") E.sel.value = m;
+  const lo = !!(invs && invs[i]), outK = kind === "out" || kind === "pwm";
+  E.card.querySelector(".pc-pol").hidden = !invs || !outK;
+  E.pol.checked = lo;
+  E.card.classList.toggle("inv", lo && outK);
+  E.row.querySelector(".pins-pills").innerHTML = pinPills(pin) + (lo && kind === "off" ? '<span class="pill" title="Aktif LOW ayarlı pin kapalıyken dahili pull-up açık kalır; yük kapalı kalır">pull-up</span>' : "");
   const simDi = isSim() && kind === "in", simAi = isSim() && kind === "ai";
   E.btn.hidden = kind !== "out" && !simDi;
   E.pw.hidden = kind !== "pwm" && !simAi;
@@ -3429,6 +3458,7 @@ function updatePinValues(v, running) {
   v.forEach((val, i) => {
     const E = pinEl[i]; if (!E) return;
     E.sel.disabled = running;
+    E.pol.disabled = running;
     E.card.querySelector(".pc-x").disabled = running;
     E.row.querySelectorAll(".as").forEach(b => { b.disabled = running || !pinAllowed(info.pins[i], b.dataset.as); });
     const m = modes[i];
@@ -3445,7 +3475,8 @@ function updatePinValues(v, running) {
       if (isSim() && document.activeElement !== E.pw) E.pw.value = val;
       if (isSim() && document.activeElement !== E.rg) { E.rg.value = val; E.rg.fill(); }
     } else {
-      E.val.innerHTML = `<span class="lamp ${val ? "on" : ""}"></span>${val ? "1" : "0"}`;
+      const lo = m === "DO" && invs && invs[i];
+      E.val.innerHTML = `<span class="lamp ${val ? "on" : ""}"></span>${val ? "1" : "0"}${lo ? `<small class="lv" title="Pin seviyesi (aktif LOW)">pin ${val ? "0 V" : "3,3 V"}</small>` : ""}`;
       E.btn.dataset.state = String(val);
       if (m === "DO") { E.btn.textContent = val ? "Kapat" : "Aç"; E.btn.disabled = running; }
       else if (isSim()) { E.btn.textContent = val ? "0 yap" : "1 yap"; E.btn.title = "Simülasyon: girişi değiştir"; E.btn.disabled = false; }
@@ -3541,12 +3572,13 @@ function curPinMap() {
   info.pins.forEach((p, i) => { if (modes[i] && modes[i] !== "OFF") o[p.g] = modes[i]; });
   return o;
 }
+function curInvList() { return invs ? info.pins.filter((p, i) => invs[i] && ["DO", "PWM"].includes(modes[i])).map(p => p.g) : []; }
 function updateDevBar() {
   $("devName").textContent = device?.name || "Kayıtlı cihaz yok";
   $("devNote").textContent = device?.note || "Pinleri seçip “Cihaz olarak kaydet” ile dosyaya kaydedin; başka zaman “Cihaz dosyası aç” ile karta aktarın.";
   const st = $("devState");
   if (!device || !info?.pins) { st.hidden = true; return; }
-  const same = sortKeys(curPinMap()) === sortKeys(device.pins);
+  const same = sortKeys(curPinMap()) === sortKeys(device.pins) && (!invs || JSON.stringify(curInvList()) === JSON.stringify((device.inv || []).slice().sort((a, b) => a - b)));
   st.hidden = false;
   st.textContent = same ? "✓ pinler cihazla aynı" : "pinler değişti";
   st.className = "pill " + (same ? "okp" : "warnp");
@@ -3591,6 +3623,7 @@ $("devOk").addEventListener("click", () => {
   $("devNm").classList.remove("bad");
   const pm = curPinMap();
   const d = { type: "mnblad-cihaz", v: 1, name, note: $("devNt").value.trim(), saved: new Date().toISOString(), fw: info.fw || "", pins: pm };
+  if (invs) d.inv = curInvList();
   if ($("devOptKart").checked) d.kart = { filt: +$("filterMs").value, pwmf: info.pwmf != null ? +$("pwmFreq").value : null, led: +$("ledPin").value };
   if (info.mbc && $("devOptMb").checked) { const c = info.mbc; d.rs485 = { mode: c.mode, addr: c.addr, baud: c.baud, par: c.par, tx: c.tx, rx: c.rx, de: c.de, to: c.to ?? null }; }
   if (info.hcc && $("devOptHc").checked) d.hc = info.hcc.map(x => [...x]);
@@ -3601,7 +3634,7 @@ $("devOk").addEventListener("click", () => {
   a.download = (name.replace(/[\\/:*?"<>|]+/g, "_").trim() || "cihaz") + ".mnblad-cihaz.json";
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  device = { name, note: d.note, pins: pm };
+  device = { name, note: d.note, pins: pm, inv: d.inv || [] };
   try { localStorage.setItem(DEV_KEY, JSON.stringify(device)); } catch {}
   $("devDlg").hidden = true;
   updateDevBar();
@@ -3626,6 +3659,7 @@ async function applyDevice(d, fname = "") {
   const now = curPinMap(), off = Object.keys(now).filter(g => !(g in d.pins)).length;
   let msg = `“${d.name || "adsız"}” cihazı karta aktarılsın mı?` + (d.note ? `\n${d.note}` : "") + `\n\n• ${n} pin: ${devCountTxt(c)}`;
   if (off) msg += `\n• Kartta şu an atanmış ${off} pin dosyada yok: kapatılacak`;
+  if (d.inv?.length) msg += `\n• Aktif LOW çıkışlar: GPIO${d.inv.join(", GPIO")}${invs ? "" : " (bu firmware desteklemiyor: atlanacak)"}`;
   if (d.kart) msg += `\n• Kart ayarları: giriş filtresi ${d.kart.filt ? d.kart.filt + " ms" : "kapalı"}${d.kart.pwmf ? ", PWM " + d.kart.pwmf + " Hz" : ""}, LED GPIO${d.kart.led}`;
   if (d.rs485) msg += info.mbc ? `\n• RS485: ${d.rs485.mode ? MB_MODES[d.rs485.mode] + `, ${d.rs485.baud} bps, TX GPIO${d.rs485.tx} / RX GPIO${d.rs485.rx}` : "kapalı"}` : "\n• RS485 ayarı bu kartta/simülasyonda yok: atlanacak";
   if (d.hc) msg += info.hcc ? `\n• Hızlı sayıcı: ${d.hc.filter(x => x[0]).length} sayıcı açık` : "\n• Hızlı sayıcı bu kartta/simülasyonda yok: atlanacak";
@@ -3647,7 +3681,7 @@ async function applyDevice(d, fname = "") {
     if (m) await tryCmd(`HCCFG ${k} ${m} ${a} ${m >= 2 ? b : -1} ${ft || 0}`, `HC${k}`);
   }
   info = await send("INFO");
-  modes = (await send("CFG")).m;
+  setCfg(await send("CFG"));
   // Pinler: dosyadaki mod, dosyada olmayan → Kapalı
   for (let i = 0; i < info.pins.length; i++) {
     const pin = info.pins[i], want = d.pins[pin.g] || "OFF", k = pinKind(want);
@@ -3655,6 +3689,15 @@ async function applyDevice(d, fname = "") {
     if (want !== "OFF" && (!MODE_LABELS[want] || !pinAllowed(pin, k))) { bad.push(`GPIO${pin.g}: ${MODE_LABELS[want] || want} bu pinde kullanılamaz`); continue; }
     if (await tryCmd(`PIN ${pin.g} ${want}`, `GPIO${pin.g}`)) modes[i] = want;
   }
+  // Çıkış kutbu (V3.1+): dosyadaki aktif LOW listesi; diğer çıkışlar aktif HIGH
+  if (invs && Array.isArray(d.inv)) {
+    const c2 = await send("CFG"); setCfg(c2);
+    for (let i = 0; i < info.pins.length; i++) {
+      if (!["DO", "PWM"].includes(modes[i])) continue;
+      const want = d.inv.includes(info.pins[i].g) ? 1 : 0;
+      if ((invs[i] || 0) !== want) await tryCmd(`INV ${info.pins[i].g} ${want}`, `GPIO${info.pins[i].g} kutup`);
+    }
+  } else if (d.inv?.length && !invs) bad.push("Aktif LOW çıkışlar bu firmware'de yok (V3.1 gerekir): kutup ayarlanmadı");
   for (const g of Object.keys(d.pins)) if (!info.pins.some(p => p.g === +g)) bad.push(`GPIO${g}: bu kartta I/O pini değil (RS485 veya hızlı sayıcıya ayrılmış olabilir)`);
   if (d.kart) {
     if (d.kart.filt != null && info.filt != null) await tryCmd("FILTER " + d.kart.filt, "Giriş filtresi");
@@ -3663,7 +3706,7 @@ async function applyDevice(d, fname = "") {
   }
   // Panel formlarını kartın yeni durumuyla yenile
   info = await send("INFO");
-  modes = (await send("CFG")).m;
+  setCfg(await send("CFG"));
   $("ledPin").value = String(info.led);
   if (info.filt != null) { const fs = $("filterMs"); if (![...fs.options].some(o => o.value === String(info.filt))) fs.add(new Option(info.filt + " ms", info.filt)); fs.value = String(info.filt); }
   if (info.pwmf != null) { const pf = $("pwmFreq"); if (![...pf.options].some(o => +o.value === info.pwmf)) pf.add(new Option(info.pwmf + " Hz", info.pwmf)); pf.value = String(info.pwmf); }
@@ -3683,7 +3726,7 @@ async function applyDevice(d, fname = "") {
   buildPinTable(); fillMbForm(); fillHcForm();
   lastCompile = null; renderAll(); refreshAddrList2();
   if (!isSim()) try { localStorage.setItem("mnblad.lastPins", JSON.stringify(Object.fromEntries(info.pins.map((p, i) => [p.g, modes[i]])))); } catch {}
-  device = { name: d.name || "adsız", note: d.note || "", pins: d.pins };
+  device = { name: d.name || "adsız", note: d.note || "", pins: d.pins, inv: Array.isArray(d.inv) ? d.inv : [] };
   try { localStorage.setItem(DEV_KEY, JSON.stringify(device)); } catch {}
   updateDevBar();
   log(`Cihaz aktarıldı: ${device.name} (${n} pin${symAdd ? ", " + symAdd + " sembol" : ""})${bad.length ? " · " + bad.length + " sorun" : ""}`, bad.length ? "warn" : "ok");
@@ -4461,7 +4504,7 @@ $("hcRows").addEventListener("click", async (e) => {
     await send(`HCCFG ${n} ${mode} ${mode ? a : -1} ${bb} ${mode ? +v("filt") : 0}`);
     log(mode ? `HC${n}: ${HC_MODES[mode]}, A GPIO${a}${mode >= 2 ? ", B GPIO" + bb : ""}` : `HC${n} kapatıldı`, "ok");
     info = await send("INFO");
-    modes = (await send("CFG")).m;
+    setCfg(await send("CFG"));
     buildPinTable(); fillMbForm(); fillHcForm();
     lastCompile = null; renderAll();
   } catch (err) { uiAlert("Hızlı sayıcı ayarlanamadı:\n" + err.message); }
@@ -4620,7 +4663,7 @@ $("btnMbApply").addEventListener("click", async () => {
     await send(`MBCFG ${mode} ${addr} ${v("mbBaud")} ${v("mbPar")} ${tx} ${rx} ${de}${to}`);
     log(mode ? `RS485 Modbus ${MB_MODES[mode]} açıldı: ${mode === 1 ? "adres " + addr + ", " : ""}${v("mbBaud")} bps` : "RS485 kapatıldı", "ok");
     info = await send("INFO");
-    modes = (await send("CFG")).m;
+    setCfg(await send("CFG"));
     buildPinTable();
     fillMbForm();
     lastCompile = null;

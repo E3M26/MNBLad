@@ -36,12 +36,15 @@
     try { saved = JSON.parse(localStorage.getItem(STORE) || "{}"); } catch {}
     const modes = {};
     for (const p of ALL_PINS) modes[p] = (saved.modes && saved.modes[p]) || (pinModes && pinModes[p]) || (p === 0 ? "DIPU" : "OFF");
+    // V3.1: çıkış kutbu (1 = aktif LOW). Simülasyonda yalnız saklanır; mantık (Q, PW) değişmez.
+    const inv = {};
+    for (const p of ALL_PINS) inv[p] = saved.inv && saved.inv[p] ? 1 : 0;
     let progLines = Array.isArray(saved.prog) ? saved.prog : [];
     let prog = [];
     let pcrc = saved.pcrc || "", pt = saved.pt || 0, pn = saved.pn || "", src = saved.src || null;  // src: base64
     let pwmf = saved.pwmf || 1000;
     let runSt = saved.runst ? 1 : 0;
-    const save = () => { try { localStorage.setItem(STORE, JSON.stringify({ modes, prog: progLines, pcrc, pt, pn, src, pwmf, runst: runSt })); } catch {} };
+    const save = () => { try { localStorage.setItem(STORE, JSON.stringify({ modes, inv, prog: progLines, pcrc, pt, pn, src, pwmf, runst: runSt })); } catch {} };
 
     // ---- Proses imajı ----
     const inImg = {}, qImg = {}, aiImg = {}, pwImg = {}, doState = {}, simIn = {}, simAi = {};
@@ -542,7 +545,14 @@
       const a = line.split(/\s+/), cmd = a[0].toUpperCase();
       switch (cmd) {
         case "INFO": return emit(info());
-        case "CFG": return emit({ t: "cfg", mon: monPeriod, m: ioPins().map(p => modes[p]) });
+        case "CFG": return emit({ t: "cfg", mon: monPeriod, m: ioPins().map(p => modes[p]), inv: ioPins().map(p => inv[p]) });
+        case "INV": {
+          if (!requireStop()) return;
+          const p = parseInt(a[1], 10);
+          if (!isIo(p) || (modes[p] !== "DO" && modes[p] !== "PWM")) return err("pin DO veya PWM degil");
+          inv[p] = parseInt(a[2], 10) ? 1 : 0; doState[p] = 0; pwImg[p] = 0; delete force["Q" + p];
+          save(); return ok();
+        }
         case "MON": {
           const ms = parseInt(a[1] || "0", 10);
           if (ms !== 0 && (ms < 50 || ms > 5000)) return err("periyot 0 veya 50..5000 ms");
@@ -582,6 +592,7 @@
           if ((m === "DO" || m === "PWM") && isInOnly(p)) return err("pin yalniz giris olabilir");
           if (m === "PWM" && modes[p] !== "PWM" && ALL_PINS.filter(x => modes[x] === "PWM").length >= 8) return err("en cok 8 PWM pini");
           modes[p] = m; pwImg[p] = 0; doState[p] = 0; simIn[p] = m === "DIPU" ? 1 : 0;
+          if (m !== "DO" && m !== "PWM" && m !== "OFF") inv[p] = 0;
           for (const k of ["I", "Q", "AI"]) delete force[k + p];
           save(); return ok();
         }
