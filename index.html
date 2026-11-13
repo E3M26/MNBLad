@@ -783,6 +783,11 @@
   <!-- LADDER -->
   <section id="tab-ladder" class="tab ladder-layout">
    <aside class="ladder-side" id="ladderTools">
+    <div class="card" id="simIO" hidden>
+      <h2>Sanal giriş / çıkış <span class="simtag">SİMÜLASYON</span></h2>
+      <p class="tag" style="margin-top:0">Programdaki girişleri buradan verin: anahtar 0/1, <b>Bas</b> basılı tuttukça 1 (buton gibi), analog için kaydırıcı. RUN'dayken rung'daki bir I kontağına tıklamak da girişi değiştirir.</p>
+      <div id="simIOList"></div>
+    </div>
 
     <div class="card plain">
       <div id="toolbar" class="toolgroups">
@@ -889,11 +894,6 @@
       <summary class="tag">Derlenmiş komut listesi</summary>
       <pre id="ilView" class="il"></pre>
     </details>
-    <div class="card" id="simIO" hidden>
-      <h2>Sanal giriş / çıkış <span class="simtag">SİMÜLASYON</span></h2>
-      <p class="tag" style="margin-top:0">Programdaki girişleri buradan verin: anahtar 0/1, <b>Bas</b> basılı tuttukça 1 (buton gibi), analog için kaydırıcı. RUN'dayken rung'daki bir I kontağına tıklamak da girişi değiştirir.</p>
-      <div id="simIOList"></div>
-    </div>
    </aside>
 
    <div class="splitter" id="splitter" title="Sürükleyerek sol alanın genişliğini değiştir (çift tık: varsayılan)"></div>
