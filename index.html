@@ -3282,9 +3282,15 @@ const pinEl = [];
 let pinOrder = [];
 try { pinOrder = JSON.parse(localStorage.getItem("mnblad.pinOrder")) || []; } catch {}
 const savePinOrder = () => { try { localStorage.setItem("mnblad.pinOrder", JSON.stringify(pinOrder)); } catch {} };
+// Kartın desteklediği modlar. V2.11–V3.1 firmware INFO listesine PWM'i yazmıyordu; PWM frekansı bildiriliyorsa PWM vardır.
+function supModes() {
+  const m = [...(info?.modes || [])];
+  if (info?.pwmf != null && !m.includes("PWM")) m.push("PWM");
+  return m;
+}
 function pinAllowed(pin, kind) {
   if (kind === "off") return true;
-  if (!info.modes.includes(KIND_MODE[kind])) return false;
+  if (!supModes().includes(KIND_MODE[kind])) return false;
   if (kind === "ai") return !!pin.adc;
   if (kind === "out" || kind === "pwm") return !pin.in;
   return true;
@@ -3343,7 +3349,7 @@ function buildPinTable() {
 STOP'ta, açılışta ve pin kapatılınca çıkış pasif seviyeye (HIGH) gider."><input type="checkbox"> <span>Aktif LOW</span> <small>yük GND ile çalışır</small></label>
       <div class="pc-ctl"></div>`;
     const sel = card.querySelector(".pc-mode");
-    for (const m of info.modes) {
+    for (const m of supModes()) {
       if (m === "OFF") continue;
       if (m === "AI" && !pin.adc) continue;
       if ((m === "DO" || m === "PWM") && pin.in) continue;
