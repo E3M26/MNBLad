@@ -558,6 +558,8 @@
   .pc-pol small { color: var(--muted); }
   .pcard.inv .pc-pol span { font-weight: 700; color: var(--kc); }
   .pc-val .lv { margin-left: 6px; color: var(--muted); font-size: .82em; }
+  .port-inst { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; margin: 0 0 12px; padding: 8px 10px;
+               border: 1px dashed var(--line); border-radius: 8px; font-size: .88em; color: var(--muted); }
   /* Cihaz profili */
   .devbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 10px 12px; margin: 0 0 12px; border: 1px solid var(--line); border-radius: 10px;
             background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 9%, var(--card)), var(--card)); }
@@ -716,6 +718,7 @@
     <div id="portList" class="portlist"></div>
     <p class="tag" style="margin:8px 0 12px">Tarayıcı güvenlik nedeniyle COM numarasını sayfaya vermez; kart, türü ve MAC adresiyle gösterilir.
       COM numarası “Yeni port seç” penceresinde görünür.</p>
+    <div class="port-inst"><span>İçinde MNBLad olmayan (boş veya başka programlı) ESP32-S3 kart mı?</span><button id="portInstall" title="Kartı BOOT + RST ile yükleme moduna alıp MNBLad'i baştan kurar (karttaki her şey silinir)">Boş karta MNBLad kur…</button></div>
     <div class="dlg-btns"><button id="portSim" title="Kart olmadan tarayıcıda çalıştır: yükleme, RUN/STOP, canlı izleme, izleme tablosu ve trend aynen çalışır"><svg class="ic" aria-hidden="true"><use href="#i-sim"/></svg>Simülasyon</button><button id="portAdd">＋ Yeni port seç…</button><button id="portClose" class="primary">Kapat</button></div>
   </div>
 </div>
@@ -1035,11 +1038,13 @@
       <div class="row" style="margin-top:10px">
         <button id="btnFwPkg" class="primary" disabled>Paketteki firmware'i yükle</button>
         <button id="btnFwFile" disabled>Dosyadan seç…</button>
+        <button id="btnFwInstall" title="İçinde hiç program olmayan veya başka program yüklü ESP32-S3 N16R8 karta MNBLad'i baştan kur (bootloader, bölüm tablosu ve uygulama; karttaki her şey silinir)">Boş karta MNBLad kur…</button>
         <button id="btnFwManual" class="halt" hidden title="Yükleme modunda bekleyen kartın portunu listeden seçip yüklemeyi tamamla">Portu elle seç ve devam et</button>
         <input id="fwFile" type="file" accept=".bin,application/octet-stream" hidden>
       </div>
       <div id="fwProg" class="fwprog" hidden><div class="fwbar"><i></i></div><span id="fwProgTxt" class="tag"></span></div>
-      <p class="note">Yalnız uygulama yazılır (0x10000). Program, semboller ve pin ayarları kartta korunur.
+      <p class="note"><b>Boş karta MNBLad kur</b>: içinde hiç program olmayan veya başka program yüklü ESP32-S3 N16R8 kart için. Kart BOOT basılıyken RST ile yükleme moduna alınır; flash tamamen silinir ve bootloader, bölüm tablosu ve MNBLad yazılır. Panelin karta bağlı olması gerekmez.</p>
+      <p class="note">Güncelleme (Paketteki / Dosyadan): yalnız uygulama yazılır (0x10000). Program, semboller ve pin ayarları kartta korunur.
         Yükleme sırasında program durur, bitince kart kendiliğinden yeniden başlar. Yükleme bitene kadar USB kablosunu çıkarmayın.</p>
     </div>
   </section>
@@ -4018,6 +4023,95 @@ $("fwFile").addEventListener("change", async (e) => {
   if (!f) return;
   flashFirmware(new Uint8Array(await f.arrayBuffer()), f.name);
 });
+
+// ======================= Boş karta ilk kurulum =======================
+// İçinde MNBLad olmayan ESP32-S3: kullanıcı kartı BOOT + RST ile ROM yükleme moduna alır, port seçer.
+// Flash silinir; bootloader (0x0), bölüm tablosu (0x8000), boot_app0 (0xe000) ve uygulama (0x10000) yazılır.
+// Firmware ESP32-S3 N16R8 için (16 MB flash, 8 MB gömülü OPI PSRAM): yazmadan önce çip, flash ve PSRAM denetlenir.
+async function installFresh() {
+  if (fwBusy) return;
+  $("portDlg").hidden = true;
+  await loadFwManifest();
+  const inst = fwManifest?.install;
+  if (!inst?.length) { uiAlert("İlk kurulum dosyaları (bootloader, bölüm tablosu) firmware paketinde yok.\nPaket yukle.ps1 -Derle -SadecePaket ile yeniden üretilmeli."); return; }
+  if (!await uiConfirm(`Boş karta MNBLad kurulsun mu?\n\nPaket: ${fwManifest.version} · kart: ${fwManifest.board || "ESP32-S3 N16R8"}\n\n` +
+      `1. Kartı USB ile bağlayın (DevKitC'de "USB" yazan port).\n2. Kartta BOOT tuşunu basılı tutun, RST'ye basıp bırakın, sonra BOOT'u bırakın (yükleme modu).\n3. “Devam”a basın ve açılan listeden kartın portunu seçin.\n\n` +
+      `Karttaki her şey silinir: eski yazılım, program ve ayarlar.`, { ok: "Devam", kind: "danger" })) return;
+  if (port) { try { await disconnect(); } catch {} }
+  let p;
+  try { p = await navigator.serial.requestPort(); } catch { return; }   // vazgeçildi
+  document.querySelector('nav.tabs .tabbtns > button[data-tab="set"]')?.click();
+  $("fwProg").scrollIntoView({ block: "center" });
+  fwBusy = true; busy = true; manualOff = true;
+  buildFwInfo();
+  let transport = null, loader = null, ok = false;
+  try {
+    setFwProg(2, "Kurulum dosyaları okunuyor…");
+    const files = [];
+    for (const it of inst) {
+      const r = await fetch("firmware/" + it.file, { cache: "no-store" });
+      if (!r.ok) throw new Error(`${it.file} okunamadı (${r.status})`);
+      const u8 = new Uint8Array(await r.arrayBuffer());
+      if (it.size && u8.length !== it.size) throw new Error(`${it.file} boyutu paket bilgisiyle tutmuyor`);
+      files.push({ data: u8, address: it.address });
+    }
+    checkImage(files[files.length - 1].data);
+    setFwProg(3, "Kütüphane yükleniyor…");
+    const esp = await import("./lib/esptool-js-0.7.0.mjs");
+    let lastErr = null;
+    for (const mode of ["default_reset", "no_reset"]) {
+      setFwProg(4, `Karta bağlanılıyor (${mode === "no_reset" ? "resetsiz" : "USB reset"})…`);
+      transport = new esp.Transport(p, false);
+      const l = new esp.ESPLoader({ transport, baudrate: 115200, romBaudrate: 115200,
+        terminal: { clean() {}, writeLine: (t) => log("[esptool] " + t), write() {} } });
+      try { const chip = await l.main(mode); log("Yükleme modunda çip: " + chip); loader = l; break; }
+      catch (e) { lastErr = e; log(`Bağlantı (${mode}) başarısız: ${e.message}`, "warn"); try { await transport.disconnect(); } catch {} transport = null; await sleep(600); }
+    }
+    if (!loader) throw new Error("Kart yükleme modunda bulunamadı. BOOT basılıyken RST'ye basıp bırakın, sonra tekrar deneyin. (" + (lastErr?.message || "") + ")");
+    // Kart denetimi
+    const name = loader.chip.CHIP_NAME;
+    if (name !== "ESP32-S3") throw new Error(`Bu kart ${name}. MNBLad yalnız ESP32-S3 içindir.`);
+    const feats = (await loader.chip.getChipFeatures(loader)).join(", ");
+    const fsz = await loader.detectFlashSize();
+    log(`Kart: ${name} · ${feats} · flash ${fsz || "algılanamadı"}`);
+    const fmb = parseInt(fsz || "", 10);
+    if (fmb && fmb < 16) throw new Error(`Kartın flash'ı ${fsz}. MNBLad 16 MB flash ister (ESP32-S3 N16R8).`);
+    if (!/PSRAM 8MB/i.test(feats) || !fmb) {
+      if (!await uiConfirm(`Kart beklenen gibi görünmüyor:\nflash ${fsz || "algılanamadı"} · ${feats}\n\nMNBLad ESP32-S3 N16R8 (16 MB flash, 8 MB gömülü PSRAM) için derlendi; bu kartta açılmayabilir veya kararsız çalışabilir.\n\nYine de kurulsun mu?`, { kind: "danger", ok: "Yine de kur" }))
+        throw new Error("Kurulum iptal edildi (kart uyumsuz)");
+    }
+    setFwProg(6, "Flash siliniyor (yarım dakikaya kadar sürebilir)…");
+    await loader.eraseFlash();
+    const total = files.reduce((a, x) => a + x.data.length, 0);
+    const before = files.map((x, i) => files.slice(0, i).reduce((a, y) => a + y.data.length, 0));
+    await loader.writeFlash({
+      fileArray: files, flashMode: "keep", flashFreq: "keep", flashSize: "keep", eraseAll: false, compress: true,
+      reportProgress: (i, written, tot) => {
+        const done = before[i] + files[i].data.length * (tot ? written / tot : 1);
+        setFwProg(10 + Math.round(done / total * 85), `Yazılıyor %${Math.round(done / total * 100)} (${i + 1}/${files.length})`);
+      },
+    });
+    setFwProg(97, "Kart yeniden başlatılıyor…");
+    await bootApp(loader);
+    ok = true;
+    setFwProg(100, `Kuruldu: ${fwManifest.version}. Kart açılıyor, panel bağlanacak…`);
+    log(`Boş karta MNBLad kuruldu: ${fwManifest.version}`, "ok");
+  } catch (e) {
+    log("Kurulum yapılamadı: " + (e?.message || e), "error");
+    setFwProg(0, "Hata: " + (e?.message || e));
+    uiAlert("Kurulum yapılamadı: " + (e?.message || e) + "\n\nKartı BOOT basılıyken RST ile yükleme moduna alıp tekrar deneyebilirsiniz.");
+  } finally {
+    try { await transport?.disconnect(); } catch {}
+    fwBusy = false; busy = false; manualOff = false;
+    buildFwInfo();
+    if (ok) {
+      setTimeout(tryAutoConnect, 4000);
+      uiAlert(`MNBLad kuruldu (${fwManifest.version}).\n\nKart yeniden başlıyor; panel birkaç saniye içinde kendiliğinden bağlanır. Bağlanmazsa kartta RST'ye basın ve Bağlan → portu seçin.\n\nKart sıfır ayarla açılır: pinleri Pinler sekmesinden (veya Cihaz dosyası aç ile) ayarlayın.`);
+    }
+  }
+}
+$("btnFwInstall").addEventListener("click", installFresh);
+$("portInstall").addEventListener("click", installFresh);
 
 // ======================= Program kaynağı: karta kaydet / karttan al =======================
 const SRC_CHUNK = 144;

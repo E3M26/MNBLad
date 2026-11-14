@@ -1,1 +1,1 @@
-{"version":"MNBLad V3.3","file":"MNBLad.bin","address":65536,"size":476912,"md5":"68cbeb3c68d712af662d13d14ef865d8","built":"2026-11-13T23:48:27"}
+{"version":"MNBLad V3.3","file":"MNBLad.bin","address":65536,"size":476912,"md5":"68cbeb3c68d712af662d13d14ef865d8","built":"2026-11-13T23:48:27","board":"ESP32-S3 N16R8","flash":"16MB","install":[{"file":"bootloader.bin","address":0,"size":19984},{"file":"partitions.bin","address":32768,"size":3072},{"file":"boot_app0.bin","address":57344,"size":8192},{"file":"MNBLad.bin","address":65536,"size":476912}]}
